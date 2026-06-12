@@ -1,0 +1,84 @@
+/* tokens.css - sistema de diseño de El Cubo
+   Variables CSS centralizadas: color, tipografía, espaciado, sombras, radios, movimiento. */
+
+:root {
+  /* ---------- Color ---------- */
+  --gray-50:  #f8f9fb;
+  --gray-100: #eef0f4;
+  --gray-200: #dfe3ea;
+  --gray-300: #c5ccd6;
+  --gray-400: #9ba3b0;
+  --gray-500: #6b7280;
+  --gray-600: #4b5260;
+  --gray-700: #353a45;
+  --gray-800: #1f232c;
+  --gray-900: #11141a;
+
+  --brand-50:  #eef4f1;
+  --brand-100: #d6e6dd;
+  --brand-500: #2f6f55;
+  --brand-600: #245843;
+  --brand-700: #1a4232;
+
+  --accent:   #b88a3a;          /* dorado sobrio para detalles */
+  --sale:     #c44a3b;          /* badge OFERTA, no chillón */
+  --sale-soft:#fbecea;
+
+  --bg:        var(--gray-50);
+  --surface:   #ffffff;
+  --text:      var(--gray-900);
+  --text-muted:var(--gray-500);
+  --border:    var(--gray-200);
+
+  /* ---------- Tipografía ---------- */
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Fraunces", "Times New Roman", Georgia, serif;
+
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.375rem;
+  --text-2xl:  1.75rem;
+  --text-3xl:  2.25rem;
+  --text-4xl:  clamp(2.5rem, 4vw + 1rem, 4rem);
+
+  --leading-tight: 1.15;
+  --leading-snug:  1.35;
+  --leading-base:  1.6;
+
+  /* ---------- Espaciado (escala 4 px) ---------- */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  24px;
+  --space-6:  32px;
+  --space-7:  48px;
+  --space-8:  64px;
+  --space-9:  96px;
+  --space-10: 128px;
+
+  /* ---------- Radios ---------- */
+  --radius-sm:   6px;
+  --radius-md:   12px;
+  --radius-lg:   20px;
+  --radius-full: 999px;
+
+  /* ---------- Sombras ---------- */
+  --shadow-sm: 0 1px 2px rgba(17, 20, 26, 0.04), 0 1px 1px rgba(17, 20, 26, 0.03);
+  --shadow-md: 0 4px 14px rgba(17, 20, 26, 0.06), 0 2px 4px rgba(17, 20, 26, 0.04);
+  --shadow-lg: 0 18px 40px rgba(17, 20, 26, 0.10), 0 6px 12px rgba(17, 20, 26, 0.06);
+
+  /* ---------- Movimiento ---------- */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 150ms;
+  --dur-base: 300ms;
+  --dur-slow: 600ms;
+
+  /* ---------- Layout ---------- */
+  --container: 1200px;
+  --container-pad: clamp(16px, 4vw, 40px);
+  --navbar-h: 68px;
+}

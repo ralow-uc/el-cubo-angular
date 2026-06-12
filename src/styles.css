@@ -1,0 +1,177 @@
+/* Estilos globales propios — Bootstrap y los 5 .css del proyecto vanilla
+ * se cargan vía angular.json en este orden:
+ *   bootstrap → tokens → base → components → animations → responsive → styles.css
+ * Así nuestros tokens ganan por cascada sobre Bootstrap. */
+
+/* ── Sticky footer ──
+ * app-root en flex column con min-height 100vh empuja al footer al final
+ * cuando el contenido es corto. El truco: <router-outlet> deja el componente
+ * de página como SIBLING suyo (no hijo), así que apuntamos a "todo sibling
+ * después de router-outlet excepto footer/toast" para que crezca.
+ * Si el contenido es más alto que el viewport, scrollea normal. */
+html, body { min-height: 100vh; margin: 0; }
+app-root { display: flex; flex-direction: column; min-height: 100vh; }
+app-root > app-navbar,
+app-root > app-footer { flex: 0 0 auto; }
+app-root > router-outlet ~ :not(app-footer):not(app-toast) {
+  flex: 1 0 auto;
+  display: block;
+}
+
+/* ── Game card: el host <app-game-card> debe llenar la columna
+ * para que todas las cards del row tengan el mismo alto ── */
+app-game-card { display: flex; height: 100%; }
+app-game-card > .game-card { width: 100%; }
+
+/* ── Detalle de producto (página nueva en Angular) ── */
+.product-detail { margin: 2.5rem 0 4rem; align-items: start; }
+.product-detail-media { aspect-ratio: 1 / 1; border-radius: var(--radius-lg); overflow: hidden; position: relative; }
+.product-detail-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.product-detail-desc { font-size: 1.05rem; line-height: 1.6; margin: 1rem 0 1.5rem; }
+.product-detail-price { font-size: 1.5rem; margin-bottom: 1.5rem; }
+.product-meta { list-style: none; padding: 0; margin: 0 0 1.5rem; display: grid; gap: 0.5rem; }
+.product-meta li { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
+.product-meta span { color: var(--text-muted); }
+.product-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.game-title a { color: inherit; text-decoration: none; }
+.game-title a:hover { color: var(--brand-600); }
+
+/* ── Toast fix para Angular: el original animaba con `.is-visible`
+ * después de insertarse; con *ngFor los toasts ya nacen visibles. ── */
+.cart-toast { opacity: 1; transform: translate(-50%, 0); }
+
+/* ── Password temporal en recover ── */
+.temp-password-box {
+  background: var(--gray-50);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin: 1rem 0;
+  text-align: center;
+}
+.temp-password-box code {
+  font-size: 1.25rem;
+  letter-spacing: 0.05em;
+  color: var(--text);
+}
+.form-shell--narrow { max-width: 480px; margin: 0 auto; }
+.form-link { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
+.form-link:hover { color: var(--brand-600); text-decoration: underline; }
+.form-foot { margin-top: 1rem; color: var(--text-muted); font-size: 0.95rem; }
+.form-foot a { color: var(--brand-600); }
+
+.profile-section-title { margin: 2rem 0 1rem; font-size: 1.1rem; color: var(--text); }
+.profile-section-title .optional { color: var(--text-muted); font-weight: 400; font-size: 0.9rem; }
+
+.checkout-shell { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 4rem; }
+@media (min-width: 900px) { .checkout-shell { grid-template-columns: 1.5fr 1fr; } }
+.checkout-form { background: var(--surface); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border); }
+.checkout-summary { background: var(--gray-50); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border); align-self: start; position: sticky; top: 1rem; }
+.checkout-summary h2 { margin: 0 0 1rem; font-size: 1.1rem; }
+.checkout-summary hr { border: 0; border-top: 1px solid var(--border); margin: 1rem 0; }
+.checkout-section-title { margin: 1.5rem 0 1rem; font-size: 1rem; color: var(--text); }
+.checkout-section-title:first-child { margin-top: 0; }
+
+/* ── Admin styles que no estaban en el original ── */
+.admin-page-head { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin: 2rem 0; flex-wrap: wrap; }
+.admin-page-head h1 { margin: 0.25rem 0; }
+.admin-page-head p { color: var(--text-muted); margin: 0; }
+
+.admin-stats { margin-bottom: 2.5rem; }
+.admin-quick-actions { margin-bottom: 3rem; }
+.admin-action-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  min-height: 160px;
+  transition:
+    border-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+  will-change: transform;
+}
+.admin-action-card:hover {
+  border-color: var(--brand-600);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.admin-action-card:hover .admin-action-arrow {
+  background: var(--brand-600);
+  color: var(--gray-50);
+  transform: translateX(2px);
+}
+.admin-action-body { flex: 1; }
+.admin-action-card h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 500;
+  margin: 0 0 var(--space-2);
+  color: var(--text);
+}
+.admin-action-card p {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+  margin: 0;
+}
+.admin-action-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: var(--gray-100);
+  color: var(--gray-700);
+  flex-shrink: 0;
+  transition:
+    background var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.admin-dialog-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: flex; align-items: center; justify-content: center; z-index: 100; padding: var(--space-4); }
+.admin-dialog {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  max-width: 640px;
+  width: 100%;
+  height: auto;
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  align-self: center;
+  flex: 0 0 auto;
+}
+.admin-dialog-head { display: flex; align-items: center; justify-content: space-between; padding: var(--space-4) var(--space-5); border-bottom: 1px solid var(--border); }
+.admin-dialog-head h2 { margin: 0; font-size: var(--text-lg); }
+.admin-dialog-close { background: transparent; border: 0; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); line-height: 1; padding: 0 var(--space-2); }
+.admin-dialog form { padding: var(--space-5); }
+.admin-dialog form .field { margin-bottom: var(--space-3) !important; }
+.admin-dialog form .row { --bs-gutter-y: 0; margin-bottom: 0; }
+.admin-dialog form .form-control { padding: 8px 12px !important; }
+.admin-dialog form textarea.form-control { min-height: 70px !important; }
+.admin-dialog form .form-help { margin-top: 4px !important; font-size: 0.75rem !important; }
+.admin-dialog form .form-actions { margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--border); }
+.admin-dialog form .form-label { margin-bottom: 4px !important; }
+
+.form-check { display: inline-flex; align-items: center; gap: var(--space-2); cursor: pointer; }
+.form-check-input {
+  appearance: auto;
+  -webkit-appearance: checkbox;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--brand-600);
+}
+.form-check-label { font-size: var(--text-sm); color: var(--text); }
+

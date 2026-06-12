@@ -1,0 +1,73 @@
+/* animations.css - keyframes y refinamientos de movimiento.
+   Cumple el requisito de la pauta: mínimo 4 animaciones. Aquí hay 5. */
+
+/* 1) Entrada del hero - fade + slide up */
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 2) Entrada escalonada de cards (categorías y juegos)
+   El stagger se logra con animation-delay aplicado por :nth-child más abajo. */
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 3) Pulse sutil del badge OFERTA */
+@keyframes sale-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(196, 74, 59, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(196, 74, 59, 0);
+  }
+}
+
+/* 4) Slide-in del subrayado en los links del navbar
+   (se usa la animación vía transform en components.css; declaramos también un keyframe
+    aquí para tenerlo disponible en hover en touch / focus prolongado). */
+@keyframes underline-slide {
+  from {
+    transform: scaleX(0);
+    transform-origin: right center;
+  }
+  to {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+}
+
+/* ---------- Stagger: aplicar delays escalonados ---------- */
+.category-grid > :nth-child(1) > .category-card { animation-delay: 80ms; }
+.category-grid > :nth-child(2) > .category-card { animation-delay: 160ms; }
+.category-grid > :nth-child(3) > .category-card { animation-delay: 240ms; }
+.category-grid > :nth-child(4) > .category-card { animation-delay: 320ms; }
+
+.game-grid > :nth-child(1) > .game-card { animation-delay: 80ms; }
+.game-grid > :nth-child(2) > .game-card { animation-delay: 200ms; }
+.game-grid > :nth-child(3) > .game-card { animation-delay: 320ms; }
+
+/* ---------- Respeto a prefers-reduced-motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

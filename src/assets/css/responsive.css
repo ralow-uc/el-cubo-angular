@@ -1,0 +1,264 @@
+/* responsive.css - adaptaciones mobile-first.
+   Cumple el requisito de la pauta: media queries para responsividad. */
+
+/* =====================================================
+   Mobile (< 640px) - base
+   - Navbar colapsable sin JS
+   ===================================================== */
+
+/* Botón hamburguesa visible en mobile */
+.nav-toggle-label {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--dur-base) var(--ease-out);
+}
+
+.nav-toggle-label:hover { background: var(--gray-100); }
+
+.nav-toggle-label span {
+  position: relative;
+  width: 18px;
+  height: 1.5px;
+  background: var(--gray-800);
+  display: block;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.nav-toggle-label span::before,
+.nav-toggle-label span::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 18px;
+  height: 1.5px;
+  background: var(--gray-800);
+  transition: transform var(--dur-base) var(--ease-out),
+              top var(--dur-base) var(--ease-out);
+}
+
+.nav-toggle-label span::before { top: -6px; }
+.nav-toggle-label span::after  { top: 6px; }
+
+.nav-toggle:checked ~ .nav-toggle-label span {
+  transform: rotate(45deg);
+}
+
+.nav-toggle:checked ~ .nav-toggle-label span::before {
+  top: 0;
+  transform: rotate(-90deg);
+}
+
+.nav-toggle:checked ~ .nav-toggle-label span::after {
+  top: 0;
+  opacity: 0;
+}
+
+/* Menú móvil oculto por defecto */
+.nav-links {
+  position: absolute;
+  top: var(--navbar-h);
+  left: 0;
+  right: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-4) var(--container-pad);
+  transform: scaleY(0);
+  transform-origin: top center;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform var(--dur-base) var(--ease-out),
+              opacity var(--dur-base) var(--ease-out);
+}
+
+.nav-toggle:checked ~ .nav-links {
+  transform: scaleY(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.nav-links .nav-link {
+  width: 100%;
+  padding-block: var(--space-3);
+  border-bottom: 1px solid var(--border);
+  font-size: var(--text-base);
+}
+
+.nav-links .nav-link:last-child { border-bottom: 0; }
+
+/* Navbar agrupado en mobile (<1024): los dropdowns son secciones
+   inline (no flotantes), el spacer se desactiva y el CTA y carrito
+   se alinean con el resto de los items. En desktop se aplican los
+   estilos de components.css por defecto (no necesita overrides). */
+@media (max-width: 1023.98px) {
+  /* En mobile el menú es vertical full-width: el margin-left:auto no aplica. */
+  .nav-links .nav-right-start { margin-left: 0; }
+
+  .nav-links .nav-dropdown {
+    width: 100%;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-links .nav-dropdown:last-child { border-bottom: 0; }
+
+  .nav-links .nav-dropdown-toggle {
+    width: 100%;
+    justify-content: space-between;
+    padding-block: var(--space-3);
+    font-size: var(--text-base);
+  }
+
+  .nav-links .nav-dropdown-toggle::after { display: none; }
+
+  .nav-links .nav-dropdown-menu {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    /* Sin negative-margin: el menú se mantiene dentro del container.
+       Border-left actúa como "rama" visual que conecta los items con
+       el toggle padre (patrón Stripe/Vercel/Material). */
+    border: 0;
+    border-left: 2px solid var(--border);
+    margin: 0;
+    padding: var(--space-1) 0 var(--space-3) var(--space-4);
+    display: none;
+    min-width: 0;
+  }
+
+  .nav-links .nav-dropdown.is-open .nav-dropdown-menu {
+    display: block;
+  }
+
+  .nav-links .nav-dropdown-item {
+    /* Padding vertical más compacto: los items anidados se leen como un
+       sub-bloque, no como links de primer nivel. */
+    padding: var(--space-2) 0;
+  }
+
+  .nav-links .nav-dropdown-item strong { font-size: var(--text-base); }
+  .nav-links .nav-dropdown-item small  { display: none; }
+
+  .nav-links .nav-cart {
+    width: 100%;
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    background: transparent;
+    /* "Carrito" a la izquierda, badge a la derecha — mismo patrón
+       que los dropdown toggles (texto a la izq, caret/badge a la der). */
+    justify-content: space-between;
+  }
+
+  /* Ícono oculto en mobile: el texto + badge ya bastan para identificar el link. */
+  .nav-links .nav-cart svg { display: none; }
+
+  .nav-links .nav-cart .cart-badge {
+    position: static;
+    margin-left: 0;
+    border: 0;
+  }
+
+  /* Texto "Carrito" visible en mobile, alineado con el resto de items. */
+  .nav-links .nav-cart-text {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+    font-size: var(--text-base);
+    font-weight: 500;
+    color: var(--gray-700);
+  }
+
+  .nav-links .nav-cta {
+    width: 100%;
+    justify-content: center;
+    margin-top: var(--space-3);
+  }
+}
+
+/* =====================================================
+   Tablet ≥ 640px
+   (Las grids category-grid / game-grid / footer-grid ahora se
+    distribuyen vía Bootstrap .row + col-md-*. Aquí solo quedan
+    refinamientos que Bootstrap no cubre.)
+   ===================================================== */
+@media (min-width: 640px) {
+  .hero-meta {
+    gap: var(--space-7);
+  }
+}
+
+/* =====================================================
+   Desktop ≥ 1024px
+   ===================================================== */
+@media (min-width: 1024px) {
+  /* Navbar horizontal */
+  .nav-toggle-label { display: none; }
+
+  .nav-links {
+    position: static;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-6);
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+    transform: none;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .nav-links .nav-link {
+    width: auto;
+    border: 0;
+    padding-block: var(--space-2);
+    font-size: var(--text-sm);
+  }
+
+  /* Hero a 2 columnas */
+  .hero {
+    padding-block: var(--space-10) var(--space-9);
+  }
+
+  .hero-grid {
+    grid-template-columns: 1.1fr 1fr;
+    gap: var(--space-8);
+  }
+
+  /* Categorías y juegos a 3 columnas: layout vía Bootstrap col-lg-*.
+     La card "ancha" del primer item conserva el aspecto 16:9. */
+  .category-card--wide .category-media {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+/* =====================================================
+   XL ≥ 1280px - refinamientos finales
+   ===================================================== */
+@media (min-width: 1280px) {
+  .section-head {
+    align-items: flex-end;
+  }
+
+  .hero-grid {
+    gap: var(--space-9);
+  }
+}

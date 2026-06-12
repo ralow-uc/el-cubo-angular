@@ -1,0 +1,138 @@
+<main>
+  <div class="container">
+    <header class="form-page-head" *ngIf="!success">
+      <span class="eyebrow">Crear cuenta</span>
+      <h1>Únete a El Cubo</h1>
+      <p>
+        Regístrate para acumular recompensas por cada compra y llevar
+        el registro de los juegos que te llevas a casa.
+      </p>
+    </header>
+
+    <section class="form-shell">
+      <div *ngIf="success" class="register-success" role="status">
+        <div class="register-success-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
+            <path d="M8 12.5l3 3 5-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <h2>¡Bienvenido a El Cubo!</h2>
+        <p class="register-success-text">
+          Tu cuenta fue creada. Te enviamos un correo de confirmación a
+          <strong>{{ success.email }}</strong>.
+        </p>
+        <ul class="register-success-meta">
+          <li><span>Usuario</span><strong>{{ success.username }}</strong></li>
+          <li><span>Cuenta creada</span><strong>{{ success.timestamp }}</strong></li>
+        </ul>
+        <div class="register-success-actions">
+          <a class="btn btn-primary" [routerLink]="['/login']">Iniciar sesión</a>
+          <button type="button" class="btn btn-ghost" (click)="startAgain()">Crear otra cuenta</button>
+        </div>
+      </div>
+
+      <form *ngIf="!success" #form="ngForm" (ngSubmit)="submit(form)" (reset)="reset(form)" novalidate>
+        <div class="form-alert form-alert--error" *ngIf="alertMsg">{{ alertMsg }}</div>
+
+        <div class="field">
+          <label class="form-label" for="fullName">Nombre completo</label>
+          <input type="text" class="form-control" id="fullName" name="fullName" autocomplete="name"
+                 required minlength="3"
+                 [(ngModel)]="model.fullName"
+                 (blur)="onBlur('fullName')"
+                 [class.is-invalid]="!!errors.fullName" />
+          <div class="invalid-feedback" *ngIf="errors.fullName">{{ errors.fullName }}</div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="field">
+              <label class="form-label" for="username">Nombre de usuario</label>
+              <input type="text" class="form-control" id="username" name="username" autocomplete="username"
+                     required minlength="3"
+                     [(ngModel)]="model.username"
+                     (blur)="onBlur('username')"
+                     [class.is-invalid]="!!errors.username" />
+              <div class="invalid-feedback" *ngIf="errors.username">{{ errors.username }}</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="field">
+              <label class="form-label" for="email">Correo electrónico</label>
+              <input type="email" class="form-control" id="email" name="email" autocomplete="email"
+                     required
+                     [(ngModel)]="model.email"
+                     (blur)="onBlur('email')"
+                     [class.is-invalid]="!!errors.email" />
+              <div class="invalid-feedback" *ngIf="errors.email">{{ errors.email }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="field">
+              <label class="form-label" for="password">Contraseña</label>
+              <input type="password" class="form-control" id="password" name="password" autocomplete="new-password"
+                     required minlength="8" maxlength="18"
+                     [(ngModel)]="model.password"
+                     (blur)="onBlur('password')"
+                     [class.is-invalid]="!!errors.password" />
+              <p class="form-help">8-18 caracteres, con mayúscula, minúscula, número y carácter especial.</p>
+              <div class="invalid-feedback" *ngIf="errors.password">{{ errors.password }}</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="field">
+              <label class="form-label" for="passwordConfirm">Repetir contraseña</label>
+              <input type="password" class="form-control" id="passwordConfirm" name="passwordConfirm" autocomplete="new-password"
+                     required
+                     [(ngModel)]="model.passwordConfirm"
+                     (blur)="onBlur('passwordConfirm')"
+                     [class.is-invalid]="!!errors.passwordConfirm" />
+              <div class="invalid-feedback" *ngIf="errors.passwordConfirm">{{ errors.passwordConfirm }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="form-label" for="birthdate">Fecha de nacimiento</label>
+          <input type="date" class="form-control" id="birthdate" name="birthdate" autocomplete="bday"
+                 required
+                 [min]="minBirthdate" [max]="maxBirthdate"
+                 [(ngModel)]="model.birthdate"
+                 (blur)="onBlur('birthdate')"
+                 [class.is-invalid]="!!errors.birthdate" />
+          <p class="form-help">Debes tener al menos 13 años para registrarte.</p>
+          <div class="invalid-feedback" *ngIf="errors.birthdate">{{ errors.birthdate }}</div>
+        </div>
+
+        <div class="field">
+          <label class="form-label" for="address">
+            Dirección de despacho <span class="optional">(opcional)</span>
+          </label>
+          <input type="text" class="form-control" id="address" name="address" autocomplete="street-address"
+                 [(ngModel)]="model.address" />
+          <p class="form-help">Si la dejas vacía, te la pediremos al momento de tu primera compra.</p>
+        </div>
+
+        <div class="form-actions">
+          <button type="reset" class="btn btn-ghost">Limpiar</button>
+          <button type="submit" class="btn btn-primary">
+            Enviar
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="form-dev-fill-wrap">
+          <button type="button" class="form-dev-fill" (click)="fillDummy()">
+            Llenar información con data dummy
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+</main>

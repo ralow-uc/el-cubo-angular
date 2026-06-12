@@ -1,0 +1,165 @@
+<main>
+  <div class="container">
+    <header class="admin-page-head">
+      <div>
+        <span class="eyebrow">Mantenedor</span>
+        <h1>Productos</h1>
+        <p>Gestiona el catálogo de juegos.</p>
+      </div>
+      <button type="button" class="btn btn-primary" (click)="openNew()">+ Nuevo producto</button>
+    </header>
+
+    <section class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Categoría</th>
+            <th class="num">Precio</th>
+            <th class="num">Stock</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="products().length === 0">
+            <td colspan="5" class="empty">Sin productos. Crea el primero.</td>
+          </tr>
+          <tr *ngFor="let p of products()">
+            <td>
+              <div class="admin-prod-cell">
+                <img [src]="imageUrl(p.image)" alt="" loading="lazy" />
+                <div>
+                  <strong>{{ p.name }}</strong>
+                  <small>{{ p.id }}</small>
+                </div>
+              </div>
+            </td>
+            <td><span class="pill">{{ p.category }}</span></td>
+            <td class="num">
+              {{ formatCLP(p.price) }}
+              <small *ngIf="p.oldPrice" class="strikethrough">{{ formatCLP(p.oldPrice) }}</small>
+            </td>
+            <td class="num">
+              <span [class.stock-low]="p.stock <= 3">{{ p.stock }}</span>
+            </td>
+            <td class="actions">
+              <button type="button" class="btn-link" (click)="openEdit(p)">Editar</button>
+              <button type="button" class="btn-link btn-link--danger" (click)="remove(p)">Eliminar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="admin-dialog-backdrop" *ngIf="open()" (click)="close()">
+      <div class="admin-dialog" (click)="$event.stopPropagation()" role="dialog">
+        <header class="admin-dialog-head">
+          <h2>{{ editingId ? 'Editar producto' : 'Nuevo producto' }}</h2>
+          <button type="button" class="admin-dialog-close" (click)="close()" aria-label="Cerrar">×</button>
+        </header>
+        <form #form="ngForm" (ngSubmit)="submit(form)" novalidate>
+          <div class="form-alert form-alert--error" *ngIf="alertMsg">{{ alertMsg }}</div>
+
+          <div class="row">
+            <div class="col-md-4">
+              <div class="field">
+                <label class="form-label" for="p-id">ID</label>
+                <input type="text" class="form-control" id="p-id" name="id" required
+                       [(ngModel)]="model.id"
+                       [disabled]="!!editingId"
+                       [class.is-invalid]="!!errors.id" />
+                <div class="invalid-feedback" *ngIf="errors.id">{{ errors.id }}</div>
+              </div>
+            </div>
+            <div class="col-md-8">
+              <div class="field">
+                <label class="form-label" for="p-name">Nombre</label>
+                <input type="text" class="form-control" id="p-name" name="name" required
+                       [(ngModel)]="model.name"
+                       [class.is-invalid]="!!errors.name" />
+                <div class="invalid-feedback" *ngIf="errors.name">{{ errors.name }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="field">
+                <label class="form-label" for="p-cat">Categoría</label>
+                <select class="form-control" id="p-cat" name="category" [(ngModel)]="model.category">
+                  <option value="estrategia">Estrategia</option>
+                  <option value="familiares">Familiares</option>
+                  <option value="cartas">Cartas</option>
+                  <option value="cooperativos">Cooperativos</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="field">
+                <label class="form-label" for="p-players">Jugadores</label>
+                <input type="text" class="form-control" id="p-players" name="players"
+                       placeholder="2 – 4 jugadores"
+                       [(ngModel)]="model.players" />
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="form-label" for="p-desc">Descripción</label>
+            <textarea class="form-control" id="p-desc" name="description" rows="3" required
+                      [(ngModel)]="model.description"
+                      [class.is-invalid]="!!errors.description"></textarea>
+            <div class="invalid-feedback" *ngIf="errors.description">{{ errors.description }}</div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4">
+              <div class="field">
+                <label class="form-label" for="p-price">Precio</label>
+                <input type="number" class="form-control" id="p-price" name="price" min="0" required
+                       [(ngModel)]="model.price"
+                       [class.is-invalid]="!!errors.price" />
+                <div class="invalid-feedback" *ngIf="errors.price">{{ errors.price }}</div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="field">
+                <label class="form-label" for="p-oldprice">Precio antes</label>
+                <input type="number" class="form-control" id="p-oldprice" name="oldPrice" min="0"
+                       [(ngModel)]="model.oldPrice" />
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="field">
+                <label class="form-label" for="p-stock">Stock</label>
+                <input type="number" class="form-control" id="p-stock" name="stock" min="0" required
+                       [(ngModel)]="model.stock"
+                       [class.is-invalid]="!!errors.stock" />
+                <div class="invalid-feedback" *ngIf="errors.stock">{{ errors.stock }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="form-label" for="p-image">Imagen (filename en assets/img/)</label>
+            <input type="text" class="form-control" id="p-image" name="image"
+                   placeholder="catan.jpg"
+                   [(ngModel)]="model.image" />
+          </div>
+
+          <div class="field">
+            <label class="form-check">
+              <input type="checkbox" class="form-check-input" name="onSale" [(ngModel)]="model.onSale" />
+              <span class="form-check-label">Marcar como oferta</span>
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-ghost" (click)="close()">Cancelar</button>
+            <button type="submit" class="btn btn-primary">{{ editingId ? 'Guardar' : 'Crear' }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>

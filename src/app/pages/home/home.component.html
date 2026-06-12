@@ -1,0 +1,72 @@
+<main>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow">PYME · Santiago, Chile</span>
+        <h1>Juegos de mesa, cuidadosamente seleccionados.</h1>
+        <p>
+          Un catálogo pequeño y honesto, pensado para grupos que valoran las buenas
+          noches alrededor de una mesa. Estrategia, familia, cartas o cooperativos:
+          elegimos lo que de verdad vale la pena llevarse a casa.
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#categorias">
+            Explorar catálogo
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </a>
+          <a class="btn btn-ghost" [routerLink]="['/categoria', 'estrategia']">Ver estrategia →</a>
+        </div>
+
+        <div class="hero-meta">
+          <div><strong>4</strong> categorías</div>
+          <div><strong>{{ totalGames }}</strong> juegos en catálogo</div>
+        </div>
+      </div>
+
+      <figure class="hero-visual" aria-hidden="true">
+        <img src="assets/img/hero-board-games.jpg" alt="" width="900" height="1125" loading="eager" />
+      </figure>
+    </div>
+  </section>
+
+  <section class="section-lg" id="categorias">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Catálogo</span>
+          <h2>Cuatro mesas, doce historias.</h2>
+        </div>
+        <p>
+          Cada categoría reúne tres títulos seleccionados a mano. Sin relleno
+          ni modas pasajeras, sólo juegos que volveríamos a sacar el próximo viernes.
+        </p>
+      </div>
+
+      <div class="category-grid row g-4">
+        <div
+          *ngFor="let cat of categories"
+          [class]="cat.size === 'wide' ? 'col-md-6 col-lg-8' : 'col-md-6 col-lg-4'"
+        >
+          <a class="category-card" [class.category-card--wide]="cat.size === 'wide'" [routerLink]="['/categoria', cat.slug]">
+            <div class="category-media">
+              <img [src]="'assets/img/' + cat.image" [alt]="cat.alt" width="960" height="720" loading="lazy" />
+            </div>
+            <div class="category-body">
+              <div>
+                <h3>{{ cat.title }}</h3>
+                <p>{{ cat.blurb }}</p>
+              </div>
+              <span class="category-arrow" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>

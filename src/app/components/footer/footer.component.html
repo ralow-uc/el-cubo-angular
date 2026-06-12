@@ -1,0 +1,34 @@
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid row g-4">
+      <div class="col-md-5">
+        <div class="footer-brand">El Cubo</div>
+        <p>
+          Tienda independiente de juegos de mesa, Santiago de Chile.
+          Catálogo pequeño, recomendaciones honestas.
+        </p>
+      </div>
+      <div class="col-md-3">
+        <h4>Catálogo</h4>
+        <ul>
+          <li><a [routerLink]="['/categoria', 'estrategia']">Estrategia</a></li>
+          <li><a [routerLink]="['/categoria', 'familiares']">Familiares</a></li>
+          <li><a [routerLink]="['/categoria', 'cartas']">Cartas</a></li>
+          <li><a [routerLink]="['/categoria', 'cooperativos']">Cooperativos</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <h4>Contacto</h4>
+        <ul>
+          <li><a href="mailto:hola@elcubo.cl">hola&#64;elcubo.cl</a></li>
+          <li><a href="#">Av. Providencia 1234, Santiago</a></li>
+          <li><a href="#">Lun a Sáb · 11:00 – 20:00</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom container">
+      <span>© 2026 El Cubo.</span>
+      <span>Desarrollado por <a href="https://www.raulow.dev/" target="_blank" rel="noopener noreferrer" class="author-link">Raúl Low</a></span>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,36 @@
+<article class="game-card" [attr.data-product-id]="product.id">
+  <a [routerLink]="['/producto', product.id]" class="game-media">
+    <span class="sale-badge" *ngIf="product.onSale">Oferta</span>
+    <img [src]="imageUrl(product.image)" [alt]="'Caja del juego ' + product.name" width="800" height="800" loading="lazy" />
+  </a>
+  <div class="game-body">
+    <h3 class="game-title">
+      <a [routerLink]="['/producto', product.id]">{{ product.name }}</a>
+    </h3>
+    <p class="game-desc">{{ product.description }}</p>
+    <div class="game-footer">
+      <div class="price">
+        <span class="price-old" *ngIf="product.oldPrice">{{ formatCLP(product.oldPrice) }}</span>
+        <span class="price-now" [class.has-sale]="product.onSale">{{ formatCLP(product.price) }}</span>
+      </div>
+      <span class="tag">{{ product.players }}</span>
+    </div>
+  </div>
+  <button
+    *ngIf="!isAdmin()"
+    type="button"
+    class="btn btn-primary game-add-btn"
+    [disabled]="product.stock <= 0"
+    (click)="add($event)"
+  >
+    <ng-container *ngIf="product.stock > 0; else outOfStock">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="9" cy="21" r="1"></circle>
+        <circle cx="20" cy="21" r="1"></circle>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+      </svg>
+      Agregar al carrito
+    </ng-container>
+    <ng-template #outOfStock>Agotado</ng-template>
+  </button>
+</article>

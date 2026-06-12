@@ -1,0 +1,53 @@
+<main>
+  <div class="container">
+    <header class="admin-page-head">
+      <div>
+        <span class="eyebrow">Mantenedor</span>
+        <h1>Inventario</h1>
+        <p>Ajusta el stock de cada producto del catálogo.</p>
+      </div>
+    </header>
+
+    <section class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Categoría</th>
+            <th class="num">Stock</th>
+            <th>Estado</th>
+            <th>Ajustar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of list()">
+            <td>
+              <div class="admin-prod-cell">
+                <img [src]="imageUrl(p.image)" alt="" loading="lazy" />
+                <div>
+                  <strong>{{ p.name }}</strong>
+                  <small>{{ p.id }}</small>
+                </div>
+              </div>
+            </td>
+            <td><span class="pill">{{ p.category }}</span></td>
+            <td class="num">{{ p.stock }}</td>
+            <td>
+              <span class="state {{ stockState(p).cls }}">{{ stockState(p).label }}</span>
+            </td>
+            <td class="actions">
+              <div class="qty-adjust">
+                <button type="button" class="qty-btn" (click)="dec(p)">−</button>
+                <input type="number" class="qty-input" min="0"
+                       [ngModel]="p.stock"
+                       (ngModelChange)="setStock(p, $event)"
+                       [name]="'stock_' + p.id" />
+                <button type="button" class="qty-btn" (click)="inc(p)">+</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+</main>

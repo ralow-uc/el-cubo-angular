@@ -1,0 +1,84 @@
+<main>
+  <div class="container">
+    <header class="form-page-head">
+      <span class="eyebrow">Panel admin</span>
+      <h1>Dashboard</h1>
+      <p>Resumen del catálogo, usuarios y pedidos.</p>
+    </header>
+
+    <section class="row g-4 admin-stats" *ngIf="stats() as s">
+      <div class="col-md-6 col-lg-3">
+        <div class="admin-stat">
+          <span class="admin-stat-label">Productos</span>
+          <strong>{{ s.productsCount }}</strong>
+          <span class="admin-stat-foot">{{ s.lowStock }} con stock bajo</span>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="admin-stat">
+          <span class="admin-stat-label">Usuarios</span>
+          <strong>{{ s.usersCount }}</strong>
+          <span class="admin-stat-foot">{{ s.admins }} administradores</span>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="admin-stat">
+          <span class="admin-stat-label">Pedidos</span>
+          <strong>{{ s.ordersCount }}</strong>
+          <span class="admin-stat-foot">{{ formatCLP(s.totalSold) }} en ventas</span>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="admin-stat">
+          <span class="admin-stat-label">Stock total</span>
+          <strong>{{ s.totalStock }}</strong>
+          <span class="admin-stat-foot">unidades disponibles</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="admin-quick-actions">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <a [routerLink]="['/admin/productos']" class="admin-action-card">
+            <div class="admin-action-body">
+              <h3>Productos</h3>
+              <p>Crear, editar y eliminar productos del catálogo.</p>
+            </div>
+            <span class="admin-action-arrow" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </a>
+        </div>
+        <div class="col-md-4">
+          <a [routerLink]="['/admin/usuarios']" class="admin-action-card">
+            <div class="admin-action-body">
+              <h3>Usuarios</h3>
+              <p>Mantenedor de cuentas: clientes y administradores.</p>
+            </div>
+            <span class="admin-action-arrow" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </a>
+        </div>
+        <div class="col-md-4">
+          <a [routerLink]="['/admin/inventario']" class="admin-action-card">
+            <div class="admin-action-body">
+              <h3>Inventario</h3>
+              <p>Monitorea el stock disponible por producto.</p>
+            </div>
+            <span class="admin-action-arrow" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>

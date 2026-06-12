@@ -1,0 +1,60 @@
+<main>
+  <div class="container">
+    <ng-container *ngIf="product() as p; else notFound">
+      <nav class="breadcrumb" aria-label="Migas de pan">
+        <a [routerLink]="['/']">Inicio</a>
+        <span aria-hidden="true">›</span>
+        <a [routerLink]="['/categoria', p.category]">{{ categoryTitle() }}</a>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">{{ p.name }}</span>
+      </nav>
+
+      <article class="product-detail row g-4">
+        <div class="col-md-6">
+          <div class="game-media product-detail-media">
+            <span class="sale-badge" *ngIf="p.onSale">Oferta</span>
+            <img [src]="imageUrl(p.image)" [alt]="'Caja del juego ' + p.name" />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <span class="eyebrow">{{ categoryTitle() }}</span>
+          <h1>{{ p.name }}</h1>
+          <p class="game-desc product-detail-desc">{{ p.description }}</p>
+
+          <div class="price product-detail-price">
+            <span class="price-old" *ngIf="p.oldPrice">{{ formatCLP(p.oldPrice) }}</span>
+            <span class="price-now" [class.has-sale]="p.onSale">{{ formatCLP(p.price) }}</span>
+          </div>
+
+          <ul class="product-meta">
+            <li><span>Jugadores</span><strong>{{ p.players }}</strong></li>
+            <li><span>Stock</span><strong [class.stock-low]="p.stock <= 3">{{ p.stock }} disponibles</strong></li>
+            <li><span>ID</span><strong>{{ p.id }}</strong></li>
+          </ul>
+
+          <div class="product-actions">
+            <a class="btn btn-ghost" [routerLink]="['/categoria', p.category]">Volver a {{ categoryTitle() }}</a>
+            <button
+              *ngIf="!isAdmin"
+              type="button"
+              class="btn btn-primary"
+              [disabled]="p.stock <= 0"
+              (click)="add()"
+            >
+              <ng-container *ngIf="p.stock > 0; else outOfStock">Agregar al carrito</ng-container>
+              <ng-template #outOfStock>Agotado</ng-template>
+            </button>
+          </div>
+        </div>
+      </article>
+    </ng-container>
+
+    <ng-template #notFound>
+      <div class="empty-state">
+        <h2>Producto no encontrado</h2>
+        <p>Es posible que haya sido eliminado o que el enlace esté equivocado.</p>
+        <a class="btn btn-primary" [routerLink]="['/']">Volver al inicio</a>
+      </div>
+    </ng-template>
+  </div>
+</main>

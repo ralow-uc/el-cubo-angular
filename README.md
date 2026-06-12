@@ -1,8 +1,8 @@
-# El Cubo — DSY2202 S4
+# El Cubo
 
-Sitio de **El Cubo**, PYME ficticia de juegos de mesa, migrado desde HTML/CSS/Bootstrap/JS vanilla a **Angular 19** con standalone components.
+Sitio de **El Cubo**, PYME ficticia de juegos de mesa, construido con **Angular 19** y standalone components.
 
-Cumple con la pauta formativa de la semana 4 (DSY2202): integración de Angular + Bootstrap, uso de directivas `*ngIf`, `*ngFor`, `[(ngModel)]`, datos estáticos en `.ts` y paso de datos entre páginas para evitar HTML duplicados.
+E-commerce frontend con catálogo dinámico por categoría, ficha de producto, autenticación, carrito, checkout simulado, historial de pedidos y panel de administración. Toda la persistencia vive en `localStorage`.
 
 ## Requisitos
 
@@ -21,17 +21,17 @@ Abre http://localhost:4200/
 ## Build de producción
 
 ```bash
-npm build
+npm run build
 ```
 
 Artefactos en `dist/el-cubo/`.
 
 ## Cuentas demo
 
-| Rol     | Login                 | Contraseña    |
-|---------|-----------------------|---------------|
-| admin   | `admin@elcubo.cl` o `admin` | `Admin2026!` |
-| cliente | `demo@elcubo.cl` o `demo`   | `Demo2026!`  |
+| Rol     | Login                       | Contraseña    |
+|---------|-----------------------------|---------------|
+| admin   | `admin@elcubo.cl` o `admin` | `Admin2026!`  |
+| cliente | `demo@elcubo.cl` o `demo`   | `Demo2026!`   |
 
 Para reiniciar los datos desde DevTools: `localStorage.clear()` y refrescar.
 
@@ -42,54 +42,28 @@ src/app/
 ├── components/        ← navbar, footer, toast, game-card (reusables)
 ├── pages/             ← cada ruta del sitio
 │   ├── home/
-│   ├── category/      ← UNA sola página, recibe :slug → renderiza dinámico
-│   ├── product-detail/← UNA sola página, recibe :id  → renderiza dinámico
+│   ├── category/      ← una sola página dinámica por :slug
+│   ├── product-detail/← una sola página dinámica por :id
 │   ├── login/ register/ recover-password/ profile/
 │   ├── cart/ checkout/ orders/
 │   └── admin/         ← dashboard, products, users, inventory
-├── services/          ← AuthService, ProductService, CartService, OrderService (signals + localStorage)
+├── services/          ← AuthService, ProductService, CartService, OrderService
 ├── guards/            ← authGuard, adminGuard funcionales
 ├── validators/        ← passwordValidator (8-18, mayús+minús+dígito+especial)
 ├── models/            ← interfaces TypeScript (User, Product, Cart, Order)
-└── data/              ← seed.ts con datos estáticos (12 productos, 2 usuarios)
+└── data/              ← seed.ts con datos iniciales (12 productos, 2 usuarios)
 ```
 
-## Demostración de los criterios de la pauta
+## Stack
 
-- **Componentes Angular para cada HTML**: 14 páginas + 4 componentes reusables.
-- **Bootstrap integrado** vía `npm` y `angular.json` (no por CDN).
-- **CSS propio**: los 5 archivos (`tokens`, `base`, `components`, `animations`, `responsive`) se cargan globales desde `angular.json`.
-- **`*ngIf`**: 75+ usos (estados vacíos, sesión, rol, errores de formulario).
-- **`*ngFor`**: 10+ usos (productos, líneas de carrito, órdenes, usuarios admin).
-- **`[(ngModel)]`**: 48+ usos en todos los formularios (login, registro, recover, profile, checkout, cart-qty, admin CRUD).
-- **Paso de datos entre páginas**:
-  - `/categoria/:slug` reemplaza los 4 HTML viejos de `/categorias/` con uno solo.
-  - `/producto/:id` es nuevo: recibe el id por ruta y muestra la ficha del producto correspondiente.
-- **Persistencia con localStorage** en servicios `providedIn: 'root'`.
-- **Roles distintos**: admin (CRUD + dashboard) y cliente (compra + pedidos).
-
-## Troubleshooting
-
-**`npm start` se queda colgado mostrando solo `> ng serve`:**
-
-Probablemente el puerto 4200 está ocupado por un proceso anterior que no murió.
-Angular CLI te pregunta en silencio si quieres usar otro puerto, pero la pregunta
-no se muestra en pantalla y bloquea esperando respuesta.
-
-Solución:
-```bash
-lsof -ti :4200 | xargs kill -9
-npm start
-```
-
-O directamente usar otro puerto:
-```bash
-npm start -- --port 4300
-```
+- Angular 19 con standalone components y signals
+- Bootstrap 5 (instalado vía npm, importado en `angular.json`)
+- Template-driven forms con validators custom
+- Routing con guards funcionales (`authGuard`, `adminGuard`)
+- Persistencia en `localStorage` encapsulada en servicios singleton
 
 ## Notas
 
 - Las imágenes locales viven en `src/assets/img/` y se sirven desde `/assets/img/...`.
-- Las validaciones de formularios se hicieron con Angular Template-driven forms + un validator custom (las 5 reglas de password).
-- Sin pasarela de pago real: el checkout simula la transacción y crea la orden en localStorage.
+- Sin pasarela de pago real: el checkout simula la transacción y crea la orden en `localStorage`.
 - Sin email transaccional: la recuperación de contraseña muestra la temporal directamente en pantalla.

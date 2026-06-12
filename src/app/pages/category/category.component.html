@@ -1,0 +1,38 @@
+<main>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Migas de pan">
+      <a [routerLink]="['/']">Inicio</a>
+      <span aria-hidden="true">›</span>
+      <span aria-current="page">{{ meta().title }}</span>
+    </nav>
+
+    <header class="cat-header">
+      <span class="eyebrow">{{ meta().eyebrow }} · {{ games().length }} títulos</span>
+      <h1>{{ meta().title }}</h1>
+      <p>{{ meta().lead }}</p>
+    </header>
+
+    <section class="game-grid row g-4" *ngIf="games().length > 0; else empty" [attr.aria-label]="'Catálogo de juegos de ' + meta().title">
+      <div *ngFor="let p of games()" class="col-md-6 col-lg-4">
+        <app-game-card [product]="p"></app-game-card>
+      </div>
+    </section>
+
+    <ng-template #empty>
+      <div class="empty-state">
+        <h2>Aún no hay juegos en esta categoría</h2>
+        <p>El catálogo está vacío por ahora. Vuelve más tarde.</p>
+        <a class="btn btn-primary" [routerLink]="['/']">Volver al inicio</a>
+      </div>
+    </ng-template>
+
+    <div class="back-section">
+      <a class="btn btn-ghost" [routerLink]="['/']">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M19 12H5M11 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        Volver al inicio
+      </a>
+    </div>
+  </div>
+</main>

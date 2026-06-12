@@ -1,0 +1,97 @@
+<main>
+  <div class="container">
+    <header class="form-page-head">
+      <span class="eyebrow">Mi perfil</span>
+      <h1>Tus datos</h1>
+      <p>Actualiza tu información personal o cambia tu contraseña.</p>
+    </header>
+
+    <section class="form-shell" *ngIf="currentUser() as me">
+      <ul class="register-success-meta">
+        <li><span>Rol</span><strong>{{ me.role === 'admin' ? 'Administrador' : 'Cliente' }}</strong></li>
+        <li><span>Miembro desde</span><strong>{{ formatDate(me.createdAt) }}</strong></li>
+      </ul>
+
+      <form #form="ngForm" (ngSubmit)="submit(form)" novalidate>
+        <div class="form-alert form-alert--error" *ngIf="alertMsg">{{ alertMsg }}</div>
+        <div class="form-alert form-alert--success" *ngIf="successMsg"><strong>{{ successMsg }}</strong></div>
+
+        <div class="field">
+          <label class="form-label" for="fullName">Nombre completo</label>
+          <input type="text" class="form-control" id="fullName" name="fullName" required
+                 [(ngModel)]="model.fullName"
+                 [class.is-invalid]="!!errors.fullName" />
+          <div class="invalid-feedback" *ngIf="errors.fullName">{{ errors.fullName }}</div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="field">
+              <label class="form-label" for="username">Nombre de usuario</label>
+              <input type="text" class="form-control" id="username" name="username" required
+                     [(ngModel)]="model.username"
+                     [class.is-invalid]="!!errors.username" />
+              <div class="invalid-feedback" *ngIf="errors.username">{{ errors.username }}</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="field">
+              <label class="form-label" for="email">Correo electrónico</label>
+              <input type="email" class="form-control" id="email" name="email" required
+                     [(ngModel)]="model.email"
+                     [class.is-invalid]="!!errors.email" />
+              <div class="invalid-feedback" *ngIf="errors.email">{{ errors.email }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="field">
+              <label class="form-label" for="birthdate">Fecha de nacimiento</label>
+              <input type="date" class="form-control" id="birthdate" name="birthdate" required
+                     [(ngModel)]="model.birthdate"
+                     [class.is-invalid]="!!errors.birthdate" />
+              <div class="invalid-feedback" *ngIf="errors.birthdate">{{ errors.birthdate }}</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="field">
+              <label class="form-label" for="address">Dirección</label>
+              <input type="text" class="form-control" id="address" name="address"
+                     [(ngModel)]="model.address" />
+            </div>
+          </div>
+        </div>
+
+        <h3 class="profile-section-title">Cambiar contraseña <span class="optional">(opcional)</span></h3>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="field">
+              <label class="form-label" for="newPassword">Nueva contraseña</label>
+              <input type="password" class="form-control" id="newPassword" name="newPassword" autocomplete="new-password"
+                     [(ngModel)]="model.newPassword"
+                     [class.is-invalid]="!!errors.newPassword" />
+              <p class="form-help">Deja vacío para mantener la actual.</p>
+              <div class="invalid-feedback" *ngIf="errors.newPassword">{{ errors.newPassword }}</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="field">
+              <label class="form-label" for="newPasswordConfirm">Repetir nueva contraseña</label>
+              <input type="password" class="form-control" id="newPasswordConfirm" name="newPasswordConfirm" autocomplete="new-password"
+                     [(ngModel)]="model.newPasswordConfirm"
+                     [class.is-invalid]="!!errors.newPasswordConfirm" />
+              <div class="invalid-feedback" *ngIf="errors.newPasswordConfirm">{{ errors.newPasswordConfirm }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        </div>
+      </form>
+    </section>
+  </div>
+</main>
