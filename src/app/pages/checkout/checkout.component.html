@@ -1,139 +1,153 @@
 <main>
   <div class="container">
-    <header class="form-page-head" *ngIf="!success">
-      <span class="eyebrow">Pago simulado</span>
-      <h1>Finaliza tu pedido</h1>
-      <p>Esto es una simulación: ningún dato real será cobrado ni almacenado en un servidor.</p>
-    </header>
+    @if (!success) {
+      <header class="form-page-head">
+        <span class="eyebrow">Pago simulado</span>
+        <h1>Finaliza tu pedido</h1>
+        <p>Esto es una simulación: ningún dato real será cobrado ni almacenado en un servidor.</p>
+      </header>
 
-    <section class="checkout-shell" *ngIf="!success">
-      <form #form="ngForm" (ngSubmit)="submit(form)" novalidate class="checkout-form">
-        <div class="form-alert form-alert--error" *ngIf="alertMsg">{{ alertMsg }}</div>
+      <section class="checkout-shell">
+        <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="checkout-form">
+          @if (alertMsg) {
+            <div class="form-alert form-alert--error">{{ alertMsg }}</div>
+          }
 
-        <h3 class="checkout-section-title">Envío</h3>
+          <h3 class="checkout-section-title">Envío</h3>
 
-        <div class="field">
-          <label class="form-label" for="receiver">Recibe</label>
-          <input type="text" class="form-control" id="receiver" name="receiver" required
-                 [(ngModel)]="model.receiver"
-                 [class.is-invalid]="!!errors.receiver" />
-          <div class="invalid-feedback" *ngIf="errors.receiver">{{ errors.receiver }}</div>
-        </div>
+          <div class="field">
+            <label class="form-label" for="receiver">Recibe</label>
+            <input type="text" class="form-control" id="receiver" formControlName="receiver"
+                   [class.is-invalid]="!!errorOf('receiver')" />
+            @if (errorOf('receiver'); as e) {
+              <div class="invalid-feedback">{{ e }}</div>
+            }
+          </div>
 
-        <div class="field">
-          <label class="form-label" for="shipAddress">Dirección de despacho</label>
-          <input type="text" class="form-control" id="shipAddress" name="shipAddress" required
-                 [(ngModel)]="model.shipAddress"
-                 [class.is-invalid]="!!errors.shipAddress" />
-          <div class="invalid-feedback" *ngIf="errors.shipAddress">{{ errors.shipAddress }}</div>
-        </div>
+          <div class="field">
+            <label class="form-label" for="shipAddress">Dirección de despacho</label>
+            <input type="text" class="form-control" id="shipAddress" formControlName="shipAddress"
+                   [class.is-invalid]="!!errorOf('shipAddress')" />
+            @if (errorOf('shipAddress'); as e) {
+              <div class="invalid-feedback">{{ e }}</div>
+            }
+          </div>
 
-        <div class="row">
-          <div class="col-md-6">
-            <div class="field">
-              <label class="form-label" for="city">Comuna</label>
-              <input type="text" class="form-control" id="city" name="city" required
-                     [(ngModel)]="model.city"
-                     [class.is-invalid]="!!errors.city" />
-              <div class="invalid-feedback" *ngIf="errors.city">{{ errors.city }}</div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="field">
+                <label class="form-label" for="city">Comuna</label>
+                <input type="text" class="form-control" id="city" formControlName="city"
+                       [class.is-invalid]="!!errorOf('city')" />
+                @if (errorOf('city'); as e) {
+                  <div class="invalid-feedback">{{ e }}</div>
+                }
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="field">
+                <label class="form-label" for="phone">Teléfono</label>
+                <input type="tel" class="form-control" id="phone" formControlName="phone"
+                       [class.is-invalid]="!!errorOf('phone')" />
+                @if (errorOf('phone'); as e) {
+                  <div class="invalid-feedback">{{ e }}</div>
+                }
+              </div>
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="field">
-              <label class="form-label" for="phone">Teléfono</label>
-              <input type="tel" class="form-control" id="phone" name="phone" required
-                     [(ngModel)]="model.phone"
-                     [class.is-invalid]="!!errors.phone" />
-              <div class="invalid-feedback" *ngIf="errors.phone">{{ errors.phone }}</div>
+
+          <h3 class="checkout-section-title">Pago</h3>
+
+          <div class="field">
+            <label class="form-label" for="cardName">Nombre en la tarjeta</label>
+            <input type="text" class="form-control" id="cardName" formControlName="cardName"
+                   [class.is-invalid]="!!errorOf('cardName')" />
+            @if (errorOf('cardName'); as e) {
+              <div class="invalid-feedback">{{ e }}</div>
+            }
+          </div>
+
+          <div class="field">
+            <label class="form-label" for="cardNumber">Número de tarjeta</label>
+            <input type="text" class="form-control" id="cardNumber" formControlName="cardNumber"
+                   placeholder="4111 1111 1111 1111"
+                   [class.is-invalid]="!!errorOf('cardNumber')" />
+            @if (errorOf('cardNumber'); as e) {
+              <div class="invalid-feedback">{{ e }}</div>
+            }
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="field">
+                <label class="form-label" for="cardExpiry">Vencimiento (MM/AA)</label>
+                <input type="text" class="form-control" id="cardExpiry" formControlName="cardExpiry"
+                       placeholder="12/28"
+                       [class.is-invalid]="!!errorOf('cardExpiry')" />
+                @if (errorOf('cardExpiry'); as e) {
+                  <div class="invalid-feedback">{{ e }}</div>
+                }
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="field">
+                <label class="form-label" for="cardCvv">CVV</label>
+                <input type="text" class="form-control" id="cardCvv" formControlName="cardCvv"
+                       placeholder="123"
+                       [class.is-invalid]="!!errorOf('cardCvv')" />
+                @if (errorOf('cardCvv'); as e) {
+                  <div class="invalid-feedback">{{ e }}</div>
+                }
+              </div>
             </div>
           </div>
-        </div>
 
-        <h3 class="checkout-section-title">Pago</h3>
-
-        <div class="field">
-          <label class="form-label" for="cardName">Nombre en la tarjeta</label>
-          <input type="text" class="form-control" id="cardName" name="cardName" required
-                 [(ngModel)]="model.cardName"
-                 [class.is-invalid]="!!errors.cardName" />
-          <div class="invalid-feedback" *ngIf="errors.cardName">{{ errors.cardName }}</div>
-        </div>
-
-        <div class="field">
-          <label class="form-label" for="cardNumber">Número de tarjeta</label>
-          <input type="text" class="form-control" id="cardNumber" name="cardNumber" required
-                 placeholder="4111 1111 1111 1111"
-                 [(ngModel)]="model.cardNumber"
-                 [class.is-invalid]="!!errors.cardNumber" />
-          <div class="invalid-feedback" *ngIf="errors.cardNumber">{{ errors.cardNumber }}</div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-6">
-            <div class="field">
-              <label class="form-label" for="cardExpiry">Vencimiento (MM/AA)</label>
-              <input type="text" class="form-control" id="cardExpiry" name="cardExpiry" required
-                     placeholder="12/28"
-                     [(ngModel)]="model.cardExpiry"
-                     [class.is-invalid]="!!errors.cardExpiry" />
-              <div class="invalid-feedback" *ngIf="errors.cardExpiry">{{ errors.cardExpiry }}</div>
-            </div>
+          <div class="form-actions">
+            <a [routerLink]="['/carrito']" class="btn btn-ghost">Volver al carrito</a>
+            <button type="submit" class="btn btn-primary">Pagar {{ formatCLP(total()) }}</button>
           </div>
-          <div class="col-md-6">
-            <div class="field">
-              <label class="form-label" for="cardCvv">CVV</label>
-              <input type="text" class="form-control" id="cardCvv" name="cardCvv" required
-                     placeholder="123"
-                     [(ngModel)]="model.cardCvv"
-                     [class.is-invalid]="!!errors.cardCvv" />
-              <div class="invalid-feedback" *ngIf="errors.cardCvv">{{ errors.cardCvv }}</div>
-            </div>
+
+          <div class="form-dev-fill-wrap">
+            <button type="button" class="form-dev-fill" (click)="fillDummy()">
+              Llenar con data dummy
+            </button>
           </div>
-        </div>
+        </form>
 
-        <div class="form-actions">
-          <a [routerLink]="['/carrito']" class="btn btn-ghost">Volver al carrito</a>
-          <button type="submit" class="btn btn-primary">Pagar {{ formatCLP(total()) }}</button>
+        <aside class="checkout-summary" id="checkout-summary">
+          <h2>Tu pedido</h2>
+          @for (line of lines(); track line.product.id) {
+            <div class="cart-summary-row">
+              <span class="cart-summary-name">{{ line.product.name }} <em>× {{ line.qty }}</em></span>
+              <strong>{{ formatCLP(line.subtotal) }}</strong>
+            </div>
+          }
+          <hr />
+          <div class="cart-summary-row cart-summary-total">
+            <span>Total</span>
+            <strong>{{ formatCLP(total()) }}</strong>
+          </div>
+        </aside>
+      </section>
+    } @else {
+      <section class="register-success" role="status">
+        <div class="register-success-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
+            <path d="M8 12.5l3 3 5-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
         </div>
-
-        <div class="form-dev-fill-wrap">
-          <button type="button" class="form-dev-fill" (click)="fillDummy()">
-            Llenar con data dummy
-          </button>
+        <h2>¡Gracias por tu compra!</h2>
+        <p class="register-success-text">
+          Tu pedido <strong>{{ success.id }}</strong> fue confirmado por
+          <strong>{{ formatCLP(success.total) }}</strong>.
+        </p>
+        <p class="form-help">Te llegará un correo con los detalles.</p>
+        <div class="register-success-actions">
+          <a class="btn btn-primary" [routerLink]="['/pedidos']">Ver mis pedidos</a>
+          <a class="btn btn-ghost" [routerLink]="['/']">Volver al catálogo</a>
         </div>
-      </form>
-
-      <aside class="checkout-summary" id="checkout-summary">
-        <h2>Tu pedido</h2>
-        <div *ngFor="let line of lines()" class="cart-summary-row">
-          <span class="cart-summary-name">{{ line.product.name }} <em>× {{ line.qty }}</em></span>
-          <strong>{{ formatCLP(line.subtotal) }}</strong>
-        </div>
-        <hr />
-        <div class="cart-summary-row cart-summary-total">
-          <span>Total</span>
-          <strong>{{ formatCLP(total()) }}</strong>
-        </div>
-      </aside>
-    </section>
-
-    <section *ngIf="success" class="register-success" role="status">
-      <div class="register-success-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
-          <path d="M8 12.5l3 3 5-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </div>
-      <h2>¡Gracias por tu compra!</h2>
-      <p class="register-success-text">
-        Tu pedido <strong>{{ success.id }}</strong> fue confirmado por
-        <strong>{{ formatCLP(success.total) }}</strong>.
-      </p>
-      <p class="form-help">Te llegará un correo con los detalles.</p>
-      <div class="register-success-actions">
-        <a class="btn btn-primary" [routerLink]="['/pedidos']">Ver mis pedidos</a>
-        <a class="btn btn-ghost" [routerLink]="['/']">Volver al catálogo</a>
-      </div>
-    </section>
+      </section>
+    }
   </div>
 </main>

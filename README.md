@@ -26,6 +26,25 @@ npm run build
 
 Artefactos en `dist/el-cubo/`.
 
+## Pruebas unitarias
+
+```bash
+npm test
+```
+
+Corre Jasmine + Karma con Chrome Headless. Para una sola corrida (CI):
+
+```bash
+npm test -- --watch=false --browsers=ChromeHeadless
+```
+
+Tests existentes:
+
+- `validators/password.validator.spec.ts` — reglas de password, edad ≥13, match de controles.
+- `services/auth.service.spec.ts` — login, logout, seed, validaciones de unicidad.
+- `services/product.service.spec.ts` — CRUD de productos, búsqueda por id/categoría.
+- `pages/login/login.component.spec.ts` — Reactive Form valid/inválido, submit.
+
 ## Cuentas demo
 
 | Rol     | Login                       | Contraseña    |
@@ -49,7 +68,7 @@ src/app/
 │   └── admin/         ← dashboard, products, users, inventory
 ├── services/          ← AuthService, ProductService, CartService, OrderService
 ├── guards/            ← authGuard, adminGuard funcionales
-├── validators/        ← passwordValidator (8-18, mayús+minús+dígito+especial)
+├── validators/        ← passwordValidator, ageValidator, matchControlValidator, cardExpiryValidator
 ├── models/            ← interfaces TypeScript (User, Product, Cart, Order)
 └── data/              ← seed.ts con datos iniciales (12 productos, 2 usuarios)
 ```
@@ -57,13 +76,42 @@ src/app/
 ## Stack
 
 - Angular 19 con standalone components y signals
+- **Reactive Forms** con validators custom para todos los formularios
+- **Control flow moderno** (`@if`, `@for`) — sin directivas estructurales legacy
 - Bootstrap 5 (instalado vía npm, importado en `angular.json`)
-- Template-driven forms con validators custom
 - Routing con guards funcionales (`authGuard`, `adminGuard`)
 - Persistencia en `localStorage` encapsulada en servicios singleton
+- Jasmine + Karma para tests unitarios
+
+## Validaciones de formularios
+
+- **Email** con formato válido
+- **Password** entre 8 y 18 caracteres, con mayúscula, minúscula, número y carácter especial
+- **Confirmación de password** debe coincidir
+- **Edad mínima** de 13 años calculada desde la fecha de nacimiento
+- **Dirección de despacho** opcional
+- **Teléfono** entre 8 y 12 dígitos
+- **Tarjeta** entre 13 y 19 dígitos, CVV de 3 o 4, vencimiento `MM/AA` no expirado
 
 ## Notas
 
 - Las imágenes locales viven en `src/assets/img/` y se sirven desde `/assets/img/...`.
 - Sin pasarela de pago real: el checkout simula la transacción y crea la orden en `localStorage`.
-- Sin email transaccional: la recuperación de contraseña muestra la temporal directamente en pantalla.
+- La recuperación de contraseña permite ingresar una nueva contraseña directamente (sin clave temporal).
+
+## Troubleshooting
+
+**`npm start` se queda colgado mostrando solo `> ng serve`:**
+
+Probablemente el puerto 4200 está ocupado por un proceso anterior.
+
+```bash
+lsof -ti :4200 | xargs kill -9
+npm start
+```
+
+O usar otro puerto:
+
+```bash
+npm start -- --port 4300
+```

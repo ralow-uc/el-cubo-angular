@@ -1,31 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { FormsModule, NgForm } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Product } from '../../../models/product.model';
 import { ProductService } from '../../../services/product.service';
 import { formatCLP, imageUrl } from '../../../services/storage.util';
 
-interface ProductForm {
-  id: string;
-  name: string;
-  category: 'estrategia' | 'familiares' | 'cartas' | 'cooperativos';
-  description: string;
-  price: number | null;
-  oldPrice: number | null;
-  stock: number | null;
-  players: string;
-  image: string;
-  onSale: boolean;
-}
-
 @Component({
   selector: 'app-admin-products',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './admin-products.component.html',
 })
 export class AdminProductsComponent {
   private productService = inject(ProductService);
+  private fb = inject(FormBuilder);
 
   readonly products = this.productService.products;
   readonly formatCLP = formatCLP;
@@ -33,37 +21,44 @@ export class AdminProductsComponent {
 
   open = signal(false);
   editingId: string | null = null;
-
-  model: ProductForm = this.empty();
-  errors: Partial<Record<keyof ProductForm, string>> = {};
   alertMsg: string | null = null;
 
-  private empty(): ProductForm {
-    return {
+  form = this.fb.nonNullable.group({
+    id: ['', [Validators.required, Validators.pattern(/^[a-z0-9-]+$/i)]],
+    name: ['', [Validators.required]],
+    category: ['estrategia' as Product['category']],
+    description: ['', [Validators.required]],
+    price: [0, [Validators.required, Validators.min(1)]],
+    oldPrice: [null as number | null],
+    stock: [0, [Validators.required, Validators.min(0)]],
+    players: [''],
+    image: [''],
+    onSale: [false],
+  });
+
+  openNew(): void {
+    this.editingId = null;
+    this.alertMsg = null;
+    this.form.reset({
       id: '',
       name: '',
       category: 'estrategia',
       description: '',
-      price: null,
+      price: 0,
       oldPrice: null,
-      stock: null,
+      stock: 0,
       players: '',
       image: '',
       onSale: false,
-    };
-  }
-
-  openNew(): void {
-    this.editingId = null;
-    this.model = this.empty();
-    this.errors = {};
-    this.alertMsg = null;
+    });
+    this.form.controls.id.enable();
     this.open.set(true);
   }
 
   openEdit(p: Product): void {
     this.editingId = p.id;
-    this.model = {
+    this.alertMsg = null;
+    this.form.reset({
       id: p.id,
       name: p.name,
       category: p.category,
@@ -71,12 +66,11 @@ export class AdminProductsComponent {
       price: p.price,
       oldPrice: p.oldPrice ?? null,
       stock: p.stock,
-      players: p.players,
-      image: p.image,
+      players: p.players ?? '',
+      image: p.image ?? '',
       onSale: !!p.onSale,
-    };
-    this.errors = {};
-    this.alertMsg = null;
+    });
+    this.form.controls.id.disable();
     this.open.set(true);
   }
 
@@ -90,36 +84,37 @@ export class AdminProductsComponent {
     }
   }
 
-  submit(_form: NgForm): void {
+  errorOf(name: keyof typeof this.form.controls): string | null {
+    const ctrl = this.form.controls[name];
+    if (ctrl.valid || (!ctrl.touched && !ctrl.dirty)) return null;
+    const e = ctrl.errors;
+    if (!e) return null;
+    if (e['required']) return 'Este campo es obligatorio.';
+    if (e['pattern'] && name === 'id') return 'Usa solo letras, números y guiones.';
+    if (e['min'] && name === 'price') return 'Precio inválido.';
+    if (e['min'] && name === 'stock') return 'Stock inválido.';
+    return 'Valor inválido.';
+  }
+
+  submit(): void {
     this.alertMsg = null;
-    this.errors = {};
-
-    if (!this.editingId) {
-      if (!this.model.id || !/^[a-z0-9-]+$/i.test(this.model.id)) {
-        this.errors.id = 'Usa solo letras, números y guiones.';
-      }
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
     }
-    if (!this.model.name.trim()) this.errors.name = 'Ingresa el nombre.';
-    if (!this.model.description.trim()) this.errors.description = 'Describe el producto.';
-    if (!this.model.price || Number(this.model.price) <= 0) this.errors.price = 'Precio inválido.';
-    if (this.model.stock === null || isNaN(Number(this.model.stock)) || Number(this.model.stock) < 0)
-      this.errors.stock = 'Stock inválido.';
-
-    if (Object.keys(this.errors).length > 0) return;
-
+    const v = this.form.getRawValue();
     const data: Partial<Product> = {
-      id: this.model.id,
-      name: this.model.name,
-      category: this.model.category,
-      description: this.model.description,
-      price: Number(this.model.price),
-      oldPrice: this.model.oldPrice ? Number(this.model.oldPrice) : null,
-      stock: Number(this.model.stock),
-      players: this.model.players,
-      image: this.model.image || this.model.id + '.jpg',
-      onSale: this.model.onSale,
+      id: v.id,
+      name: v.name,
+      category: v.category,
+      description: v.description,
+      price: Number(v.price),
+      oldPrice: v.oldPrice ? Number(v.oldPrice) : null,
+      stock: Number(v.stock),
+      players: v.players,
+      image: v.image || v.id + '.jpg',
+      onSale: v.onSale,
     };
-
     try {
       if (this.editingId) this.productService.update(this.editingId, data);
       else this.productService.create(data);

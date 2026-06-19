@@ -145,4 +145,10 @@ export class AuthService {
     this.update(user.id, { password: tempPassword });
     return { user, tempPassword };
   }
+
+  setPasswordByEmail(email: string, newPassword: string): User {
+    const user = this.findByLogin(email);
+    if (!user) throw new Error('No encontramos una cuenta con ese correo.');
+    return this.update(user.id, { password: newPassword });
+  }
 }

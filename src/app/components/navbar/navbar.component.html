@@ -29,33 +29,33 @@
         </ul>
       </div>
 
-      <div class="nav-dropdown" [class.is-open]="isOpen('admin')" *ngIf="currentUser()?.role === 'admin'">
-        <button
-          type="button"
-          class="nav-dropdown-toggle"
-          [attr.aria-expanded]="isOpen('admin')"
-          aria-haspopup="menu"
-          (click)="$event.stopPropagation(); toggle('admin')"
-        >
-          <span>Admin</span>
-          <svg class="nav-caret" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-            <path d="M2 3.5L5 6.5L8 3.5" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-        </button>
-        <ul class="nav-dropdown-menu" role="menu">
-          <li role="none"><a class="nav-dropdown-item" role="menuitem" [routerLink]="['/admin']" (click)="closeAll()"><strong>Dashboard</strong><small>Resumen con métricas y accesos rápidos.</small></a></li>
-          <li role="none"><a class="nav-dropdown-item" role="menuitem" [routerLink]="['/admin/productos']" (click)="closeAll()"><strong>Productos</strong><small>Crear, editar y eliminar del catálogo.</small></a></li>
-          <li role="none"><a class="nav-dropdown-item" role="menuitem" [routerLink]="['/admin/usuarios']" (click)="closeAll()"><strong>Usuarios</strong><small>Mantener clientes y administradores.</small></a></li>
-          <li role="none"><a class="nav-dropdown-item" role="menuitem" [routerLink]="['/admin/inventario']" (click)="closeAll()"><strong>Inventario</strong><small>Ajustar stock por producto.</small></a></li>
-        </ul>
-      </div>
+      @if (currentUser()?.role === 'admin') {
+        <div class="nav-dropdown" [class.is-open]="isOpen('admin')">
+          <button
+            type="button"
+            class="nav-dropdown-toggle"
+            [attr.aria-expanded]="isOpen('admin')"
+            aria-haspopup="menu"
+            (click)="$event.stopPropagation(); toggle('admin')"
+          >
+            <span>Admin</span>
+            <svg class="nav-caret" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <path d="M2 3.5L5 6.5L8 3.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <ul class="nav-dropdown-menu" role="menu">
+            <li role="none"><a class="nav-dropdown-item" role="menuitem" [routerLink]="['/admin']" (click)="closeAll()"><strong>Dashboard</strong><small>Resumen con métricas y accesos rápidos.</small></a></li>
+            <li role="none"><a class="nav-dropdown-item" role="menuitem" [routerLink]="['/admin/productos']" (click)="closeAll()"><strong>Productos</strong><small>Crear, editar y eliminar del catálogo.</small></a></li>
+            <li role="none"><a class="nav-dropdown-item" role="menuitem" [routerLink]="['/admin/usuarios']" (click)="closeAll()"><strong>Usuarios</strong><small>Mantener clientes y administradores.</small></a></li>
+            <li role="none"><a class="nav-dropdown-item" role="menuitem" [routerLink]="['/admin/inventario']" (click)="closeAll()"><strong>Inventario</strong><small>Ajustar stock por producto.</small></a></li>
+          </ul>
+        </div>
+      }
 
-      <ng-container *ngIf="!currentUser(); else loggedIn">
+      @if (!currentUser()) {
         <a class="nav-link nav-right-start" [routerLink]="['/login']" routerLinkActive="is-active">Iniciar sesión</a>
         <a class="nav-cta" [routerLink]="['/registro']">Crear cuenta</a>
-      </ng-container>
-
-      <ng-template #loggedIn>
+      } @else {
         <div class="nav-dropdown nav-right-start" data-align="right" [class.is-open]="isOpen('cuenta')">
           <button
             type="button"
@@ -71,7 +71,9 @@
           </button>
           <ul class="nav-dropdown-menu" role="menu">
             <li role="none"><a class="nav-dropdown-item" role="menuitem" [routerLink]="['/perfil']" (click)="closeAll()"><strong>Mi perfil</strong><small>Editar tus datos y contraseña.</small></a></li>
-            <li role="none" *ngIf="currentUser()?.role === 'cliente'"><a class="nav-dropdown-item" role="menuitem" [routerLink]="['/pedidos']" (click)="closeAll()"><strong>Mis pedidos</strong><small>Historial de compras realizadas.</small></a></li>
+            @if (currentUser()?.role === 'cliente') {
+              <li role="none"><a class="nav-dropdown-item" role="menuitem" [routerLink]="['/pedidos']" (click)="closeAll()"><strong>Mis pedidos</strong><small>Historial de compras realizadas.</small></a></li>
+            }
             <li class="nav-dropdown-sep" role="separator"></li>
             <li role="none">
               <button type="button" class="nav-dropdown-item nav-dropdown-item--danger" role="menuitem" (click)="logout()">Cerrar sesión</button>
@@ -79,16 +81,18 @@
           </ul>
         </div>
 
-        <a *ngIf="currentUser()?.role === 'cliente'" class="nav-cart" [routerLink]="['/carrito']" routerLinkActive="is-active" (click)="closeAll()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="9" cy="21" r="1"></circle>
-            <circle cx="20" cy="21" r="1"></circle>
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-          </svg>
-          <span class="nav-cart-text">Carrito</span>
-          <span class="cart-badge" [attr.data-cart-badge]="cartCount()">{{ cartCount() }}</span>
-        </a>
-      </ng-template>
+        @if (currentUser()?.role === 'cliente') {
+          <a class="nav-cart" [routerLink]="['/carrito']" routerLinkActive="is-active" (click)="closeAll()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            <span class="nav-cart-text">Carrito</span>
+            <span class="cart-badge" [attr.data-cart-badge]="cartCount()">{{ cartCount() }}</span>
+          </a>
+        }
+      }
     </nav>
   </div>
 </header>

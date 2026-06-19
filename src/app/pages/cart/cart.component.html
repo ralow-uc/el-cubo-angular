@@ -6,33 +6,34 @@
       <p>Revisa los productos antes de continuar al pago.</p>
     </header>
 
-    <ng-container *ngIf="lines().length > 0; else emptyCart">
+    @if (lines().length > 0) {
       <div class="cart-grid">
         <div class="cart-list">
-          <div *ngFor="let line of lines()" class="cart-line">
-            <div class="cart-line-media">
-              <img [src]="imageUrl(line.product.image)" [alt]="line.product.name" loading="lazy" />
-            </div>
-            <div class="cart-line-body">
-              <h3>{{ line.product.name }}</h3>
-              <p>{{ formatCLP(line.product.price) }} c/u · {{ line.product.players }}</p>
-              <div class="cart-line-qty">
-                <button type="button" class="qty-btn" (click)="dec(line.product.id, line.qty)" aria-label="Quitar uno">−</button>
-                <input type="number" class="qty-input"
-                       [ngModel]="line.qty"
-                       (ngModelChange)="updateQty(line.product.id, $event)"
-                       [name]="'qty_' + line.product.id"
-                       min="0" [max]="line.product.stock" />
-                <button type="button" class="qty-btn" (click)="inc(line.product.id, line.qty)"
-                        [disabled]="line.qty >= line.product.stock" aria-label="Agregar uno">+</button>
-                <span class="qty-stock">Stock: {{ line.product.stock }}</span>
+          @for (line of lines(); track line.product.id) {
+            <div class="cart-line">
+              <div class="cart-line-media">
+                <img [src]="imageUrl(line.product.image)" [alt]="line.product.name" loading="lazy" />
+              </div>
+              <div class="cart-line-body">
+                <h3>{{ line.product.name }}</h3>
+                <p>{{ formatCLP(line.product.price) }} c/u · {{ line.product.players }}</p>
+                <div class="cart-line-qty">
+                  <button type="button" class="qty-btn" (click)="dec(line.product.id, line.qty)" aria-label="Quitar uno">−</button>
+                  <input type="number" class="qty-input"
+                         [value]="line.qty"
+                         (input)="updateQty(line.product.id, $any($event.target).value)"
+                         min="0" [max]="line.product.stock" />
+                  <button type="button" class="qty-btn" (click)="inc(line.product.id, line.qty)"
+                          [disabled]="line.qty >= line.product.stock" aria-label="Agregar uno">+</button>
+                  <span class="qty-stock">Stock: {{ line.product.stock }}</span>
+                </div>
+              </div>
+              <div class="cart-line-end">
+                <strong class="cart-line-total">{{ formatCLP(line.subtotal) }}</strong>
+                <button type="button" class="cart-line-remove" (click)="remove(line.product.id)" aria-label="Quitar del carrito">Quitar</button>
               </div>
             </div>
-            <div class="cart-line-end">
-              <strong class="cart-line-total">{{ formatCLP(line.subtotal) }}</strong>
-              <button type="button" class="cart-line-remove" (click)="remove(line.product.id)" aria-label="Quitar del carrito">Quitar</button>
-            </div>
-          </div>
+          }
         </div>
 
         <aside class="cart-summary">
@@ -51,14 +52,12 @@
           <button type="button" class="btn btn-ghost" (click)="clearAll()">Vaciar carrito</button>
         </aside>
       </div>
-    </ng-container>
-
-    <ng-template #emptyCart>
+    } @else {
       <div class="empty-state">
         <h2>Tu carrito está vacío</h2>
         <p>Explora el catálogo y suma juegos para empezar tu pedido.</p>
         <a class="btn btn-primary" [routerLink]="['/']">Ir al catálogo</a>
       </div>
-    </ng-template>
+    }
   </div>
 </main>

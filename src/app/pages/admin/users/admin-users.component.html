@@ -21,109 +21,122 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngIf="users().length === 0">
-            <td colspan="5" class="empty">Sin usuarios.</td>
-          </tr>
-          <tr *ngFor="let u of users()">
-            <td>
-              <strong>{{ u.fullName }}</strong>
-              <small>&#64;{{ u.username }}</small>
-            </td>
-            <td>{{ u.email }}</td>
-            <td>
-              <span class="pill" [class.pill--brand]="u.role === 'admin'">{{ u.role }}</span>
-            </td>
-            <td>{{ formatDate(u.createdAt) }}</td>
-            <td class="actions">
-              <button type="button" class="btn-link" (click)="openEdit(u)">Editar</button>
-              <span *ngIf="u.id === me()?.id" class="muted">tú</span>
-              <button *ngIf="u.id !== me()?.id" type="button" class="btn-link btn-link--danger" (click)="remove(u)">Eliminar</button>
-            </td>
-          </tr>
+          @if (users().length === 0) {
+            <tr><td colspan="5" class="empty">Sin usuarios.</td></tr>
+          }
+          @for (u of users(); track u.id) {
+            <tr>
+              <td>
+                <strong>{{ u.fullName }}</strong>
+                <small>&#64;{{ u.username }}</small>
+              </td>
+              <td>{{ u.email }}</td>
+              <td>
+                <span class="pill" [class.pill--brand]="u.role === 'admin'">{{ u.role }}</span>
+              </td>
+              <td>{{ formatDate(u.createdAt) }}</td>
+              <td class="actions">
+                <button type="button" class="btn-link" (click)="openEdit(u)">Editar</button>
+                @if (u.id === me()?.id) {
+                  <span class="muted">tú</span>
+                } @else {
+                  <button type="button" class="btn-link btn-link--danger" (click)="remove(u)">Eliminar</button>
+                }
+              </td>
+            </tr>
+          }
         </tbody>
       </table>
     </section>
 
-    <div class="admin-dialog-backdrop" *ngIf="open()" (click)="close()">
-      <div class="admin-dialog" (click)="$event.stopPropagation()" role="dialog">
-        <header class="admin-dialog-head">
-          <h2>{{ editingId ? 'Editar usuario' : 'Nuevo usuario' }}</h2>
-          <button type="button" class="admin-dialog-close" (click)="close()" aria-label="Cerrar">×</button>
-        </header>
-        <form #form="ngForm" (ngSubmit)="submit(form)" novalidate>
-          <div class="form-alert form-alert--error" *ngIf="alertMsg">{{ alertMsg }}</div>
+    @if (open()) {
+      <div class="admin-dialog-backdrop" (click)="close()">
+        <div class="admin-dialog" (click)="$event.stopPropagation()" role="dialog">
+          <header class="admin-dialog-head">
+            <h2>{{ editingId ? 'Editar usuario' : 'Nuevo usuario' }}</h2>
+            <button type="button" class="admin-dialog-close" (click)="close()" aria-label="Cerrar">×</button>
+          </header>
+          <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+            @if (alertMsg) {
+              <div class="form-alert form-alert--error">{{ alertMsg }}</div>
+            }
 
-          <div class="field">
-            <label class="form-label" for="u-fullName">Nombre completo</label>
-            <input type="text" class="form-control" id="u-fullName" name="fullName" required
-                   [(ngModel)]="model.fullName"
-                   [class.is-invalid]="!!errors.fullName" />
-            <div class="invalid-feedback" *ngIf="errors.fullName">{{ errors.fullName }}</div>
-          </div>
+            <div class="field">
+              <label class="form-label" for="u-fullName">Nombre completo</label>
+              <input type="text" class="form-control" id="u-fullName" formControlName="fullName"
+                     [class.is-invalid]="!!errorOf('fullName')" />
+              @if (errorOf('fullName'); as e) {
+                <div class="invalid-feedback">{{ e }}</div>
+              }
+            </div>
 
-          <div class="row">
-            <div class="col-md-6">
-              <div class="field">
-                <label class="form-label" for="u-username">Usuario</label>
-                <input type="text" class="form-control" id="u-username" name="username" required
-                       [(ngModel)]="model.username"
-                       [class.is-invalid]="!!errors.username" />
-                <div class="invalid-feedback" *ngIf="errors.username">{{ errors.username }}</div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="field">
+                  <label class="form-label" for="u-username">Usuario</label>
+                  <input type="text" class="form-control" id="u-username" formControlName="username"
+                         [class.is-invalid]="!!errorOf('username')" />
+                  @if (errorOf('username'); as e) {
+                    <div class="invalid-feedback">{{ e }}</div>
+                  }
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="field">
+                  <label class="form-label" for="u-email">Correo</label>
+                  <input type="email" class="form-control" id="u-email" formControlName="email"
+                         [class.is-invalid]="!!errorOf('email')" />
+                  @if (errorOf('email'); as e) {
+                    <div class="invalid-feedback">{{ e }}</div>
+                  }
+                </div>
               </div>
             </div>
-            <div class="col-md-6">
-              <div class="field">
-                <label class="form-label" for="u-email">Correo</label>
-                <input type="email" class="form-control" id="u-email" name="email" required
-                       [(ngModel)]="model.email"
-                       [class.is-invalid]="!!errors.email" />
-                <div class="invalid-feedback" *ngIf="errors.email">{{ errors.email }}</div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="field">
+                  <label class="form-label" for="u-role">Rol</label>
+                  <select class="form-control" id="u-role" formControlName="role">
+                    <option value="cliente">Cliente</option>
+                    <option value="admin">Administrador</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="field">
+                  <label class="form-label" for="u-birthdate">Fecha de nacimiento</label>
+                  <input type="date" class="form-control" id="u-birthdate" formControlName="birthdate"
+                         [class.is-invalid]="!!errorOf('birthdate')" />
+                  @if (errorOf('birthdate'); as e) {
+                    <div class="invalid-feedback">{{ e }}</div>
+                  }
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="row">
-            <div class="col-md-6">
-              <div class="field">
-                <label class="form-label" for="u-role">Rol</label>
-                <select class="form-control" id="u-role" name="role" [(ngModel)]="model.role">
-                  <option value="cliente">Cliente</option>
-                  <option value="admin">Administrador</option>
-                </select>
-              </div>
+            <div class="field">
+              <label class="form-label" for="u-address">Dirección</label>
+              <input type="text" class="form-control" id="u-address" formControlName="address" />
             </div>
-            <div class="col-md-6">
-              <div class="field">
-                <label class="form-label" for="u-birthdate">Fecha de nacimiento</label>
-                <input type="date" class="form-control" id="u-birthdate" name="birthdate" required
-                       [(ngModel)]="model.birthdate"
-                       [class.is-invalid]="!!errors.birthdate" />
-                <div class="invalid-feedback" *ngIf="errors.birthdate">{{ errors.birthdate }}</div>
-              </div>
+
+            <div class="field">
+              <label class="form-label" for="u-password">Contraseña</label>
+              <input type="password" class="form-control" id="u-password" formControlName="password"
+                     [class.is-invalid]="!!errorOf('password')" />
+              <p class="form-help">{{ editingId ? '(dejar en blanco para no cambiar)' : '8-18 chars, mayús, minús, número y especial' }}</p>
+              @if (errorOf('password'); as e) {
+                <div class="invalid-feedback">{{ e }}</div>
+              }
             </div>
-          </div>
 
-          <div class="field">
-            <label class="form-label" for="u-address">Dirección</label>
-            <input type="text" class="form-control" id="u-address" name="address"
-                   [(ngModel)]="model.address" />
-          </div>
-
-          <div class="field">
-            <label class="form-label" for="u-password">Contraseña</label>
-            <input type="password" class="form-control" id="u-password" name="password"
-                   [(ngModel)]="model.password"
-                   [class.is-invalid]="!!errors.password" />
-            <p class="form-help">{{ editingId ? '(dejar en blanco para no cambiar)' : '(8-18 chars, mayúscula, minúscula, número y especial)' }}</p>
-            <div class="invalid-feedback" *ngIf="errors.password">{{ errors.password }}</div>
-          </div>
-
-          <div class="form-actions">
-            <button type="button" class="btn btn-ghost" (click)="close()">Cancelar</button>
-            <button type="submit" class="btn btn-primary">{{ editingId ? 'Guardar' : 'Crear' }}</button>
-          </div>
-        </form>
+            <div class="form-actions">
+              <button type="button" class="btn btn-ghost" (click)="close()">Cancelar</button>
+              <button type="submit" class="btn btn-primary">{{ editingId ? 'Guardar' : 'Crear' }}</button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    }
   </div>
 </main>

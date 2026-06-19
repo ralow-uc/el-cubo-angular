@@ -1,36 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { FormsModule, NgForm } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import {
-  EMAIL_RE,
-  calcAge,
-  validatePasswordString,
+  ageValidator,
+  matchControlValidator,
+  passwordValidator,
 } from '../../validators/password.validator';
-
-interface FormState {
-  fullName: string;
-  username: string;
-  email: string;
-  password: string;
-  passwordConfirm: string;
-  birthdate: string;
-  address: string;
-}
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './register.component.html',
 })
 export class RegisterComponent {
   private auth = inject(AuthService);
-  private router = inject(Router);
+  private fb = inject(FormBuilder);
 
-  model: FormState = this.empty();
-  errors: Partial<Record<keyof FormState, string>> = {};
   alertMsg: string | null = null;
   success: { email: string; username: string; timestamp: string } | null = null;
 
@@ -45,62 +33,23 @@ export class RegisterComponent {
     return d.toISOString().split('T')[0];
   })();
 
-  private empty(): FormState {
-    return {
-      fullName: '',
-      username: '',
-      email: '',
-      password: '',
-      passwordConfirm: '',
-      birthdate: '',
-      address: '',
-    };
-  }
+  form = this.fb.nonNullable.group({
+    fullName: ['', [Validators.required, Validators.minLength(3)]],
+    username: ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^\S+$/)]],
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, passwordValidator]],
+    passwordConfirm: ['', [Validators.required, matchControlValidator('password')]],
+    birthdate: ['', [Validators.required, ageValidator]],
+    address: [''],
+  });
 
-  private validateField<K extends keyof FormState>(name: K): string | null {
-    const v = (this.model[name] ?? '').trim();
-    switch (name) {
-      case 'fullName':
-        if (!v) return 'Ingresa tu nombre completo.';
-        if (v.length < 3) return 'El nombre es demasiado corto.';
-        return null;
-      case 'username':
-        if (!v) return 'Elige un nombre de usuario.';
-        if (v.length < 3) return 'El usuario debe tener al menos 3 caracteres.';
-        if (/\s/.test(v)) return 'El usuario no puede contener espacios.';
-        return null;
-      case 'email':
-        if (!v) return 'Ingresa tu correo electrónico.';
-        if (!EMAIL_RE.test(v)) return 'El formato del correo no es válido.';
-        return null;
-      case 'password':
-        return validatePasswordString(this.model.password);
-      case 'passwordConfirm':
-        if (!this.model.passwordConfirm) return 'Repite la contraseña.';
-        if (this.model.passwordConfirm !== this.model.password)
-          return 'Las contraseñas no coinciden.';
-        return null;
-      case 'birthdate':
-        if (!v) return 'Ingresa tu fecha de nacimiento.';
-        const age = calcAge(v);
-        if (age < 0) return 'La fecha de nacimiento no es válida.';
-        if (age < 13) return 'Debes tener al menos 13 años para registrarte.';
-        if (age > 120) return 'La fecha de nacimiento no es realista.';
-        return null;
-      default:
-        return null;
-    }
-  }
-
-  onBlur(name: keyof FormState): void {
-    const err = this.validateField(name);
-    if (err) this.errors[name] = err;
-    else delete this.errors[name];
+  get f() {
+    return this.form.controls;
   }
 
   fillDummy(): void {
     const rand = Math.random().toString(36).slice(2, 5);
-    this.model = {
+    this.form.setValue({
       fullName: 'Raúl Low',
       username: 'raullow_' + rand,
       email: 'raul.low+' + rand + '@example.com',
@@ -108,58 +57,69 @@ export class RegisterComponent {
       passwordConfirm: 'Cubo2026!',
       birthdate: '2000-05-15',
       address: 'Av. Providencia 1234, Santiago',
-    };
-    this.errors = {};
+    });
   }
 
-  reset(form: NgForm): void {
-    form.resetForm(this.empty());
-    this.errors = {};
+  clear(): void {
+    this.form.reset();
     this.alertMsg = null;
   }
 
   startAgain(): void {
     this.success = null;
-    this.model = this.empty();
-    this.errors = {};
+    this.clear();
   }
 
-  submit(form: NgForm): void {
+  errorOf(controlName: keyof typeof this.form.controls): string | null {
+    const ctrl = this.form.controls[controlName];
+    if (!ctrl || ctrl.valid || (!ctrl.touched && !ctrl.dirty)) return null;
+    const e = ctrl.errors;
+    if (!e) return null;
+    if (e['required']) return 'Este campo es obligatorio.';
+    if (e['minlength']) return `Mínimo ${e['minlength'].requiredLength} caracteres.`;
+    if (e['pattern'] && controlName === 'username') return 'No puede contener espacios.';
+    if (e['email']) return 'El formato del correo no es válido.';
+    if (e['password']) return e['password'];
+    if (e['match']) return 'Las contraseñas no coinciden.';
+    if (e['age']) return e['age'];
+    return 'Valor inválido.';
+  }
+
+  submit(): void {
     this.alertMsg = null;
-    this.errors = {};
-
-    (Object.keys(this.model) as (keyof FormState)[]).forEach((k) => {
-      if (k === 'address') return;
-      const err = this.validateField(k);
-      if (err) this.errors[k] = err;
-    });
-
-    if (Object.keys(this.errors).length > 0) return;
-
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    const v = this.form.getRawValue();
     try {
       this.auth.create({
-        fullName: this.model.fullName,
-        username: this.model.username,
-        email: this.model.email,
-        password: this.model.password,
-        birthdate: this.model.birthdate,
-        address: this.model.address,
+        fullName: v.fullName,
+        username: v.username,
+        email: v.email,
+        password: v.password,
+        birthdate: v.birthdate,
+        address: v.address,
         role: 'cliente',
       });
       this.success = {
-        email: this.model.email,
-        username: this.model.username,
+        email: v.email,
+        username: v.username,
         timestamp: new Date().toLocaleString('es-CL', {
           dateStyle: 'long',
           timeStyle: 'short',
         }),
       };
-      form.resetForm(this.empty());
+      this.form.reset();
     } catch (err) {
       const msg = (err as Error).message;
-      if (/usuario/i.test(msg)) this.errors.username = msg;
-      else if (/correo/i.test(msg)) this.errors.email = msg;
-      else this.alertMsg = msg;
+      if (/usuario/i.test(msg)) {
+        this.form.controls.username.setErrors({ taken: msg });
+      } else if (/correo/i.test(msg)) {
+        this.form.controls.email.setErrors({ taken: msg });
+      } else {
+        this.alertMsg = msg;
+      }
     }
   }
 }

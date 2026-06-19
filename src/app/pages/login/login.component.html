@@ -7,8 +7,10 @@
     </header>
 
     <section class="form-shell">
-      <form #form="ngForm" (ngSubmit)="submit(form)" novalidate>
-        <div class="form-alert form-alert--error" *ngIf="alertMsg">{{ alertMsg }}</div>
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        @if (alertMsg) {
+          <div class="form-alert form-alert--error">{{ alertMsg }}</div>
+        }
 
         <div class="field">
           <label class="form-label" for="login">Usuario o correo electrónico</label>
@@ -16,16 +18,13 @@
             type="text"
             class="form-control"
             id="login"
-            name="login"
+            formControlName="login"
             autocomplete="username"
-            required
-            [(ngModel)]="loginField"
-            #login="ngModel"
-            [class.is-invalid]="login.invalid && login.touched"
+            [class.is-invalid]="form.controls.login.invalid && form.controls.login.touched"
           />
-          <div class="invalid-feedback" *ngIf="login.invalid && login.touched">
-            Ingresa tu usuario o correo.
-          </div>
+          @if (form.controls.login.invalid && form.controls.login.touched) {
+            <div class="invalid-feedback">Ingresa tu usuario o correo.</div>
+          }
         </div>
 
         <div class="field">
@@ -34,16 +33,13 @@
             type="password"
             class="form-control"
             id="password"
-            name="password"
+            formControlName="password"
             autocomplete="current-password"
-            required
-            [(ngModel)]="password"
-            #pwd="ngModel"
-            [class.is-invalid]="pwd.invalid && pwd.touched"
+            [class.is-invalid]="form.controls.password.invalid && form.controls.password.touched"
           />
-          <div class="invalid-feedback" *ngIf="pwd.invalid && pwd.touched">
-            Ingresa tu contraseña.
-          </div>
+          @if (form.controls.password.invalid && form.controls.password.touched) {
+            <div class="invalid-feedback">Ingresa tu contraseña.</div>
+          }
           <p class="form-help">
             <a [routerLink]="['/recuperar']">¿Olvidaste tu contraseña?</a>
           </p>

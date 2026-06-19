@@ -12,19 +12,21 @@
       <p>{{ meta().lead }}</p>
     </header>
 
-    <section class="game-grid row g-4" *ngIf="games().length > 0; else empty" [attr.aria-label]="'Catálogo de juegos de ' + meta().title">
-      <div *ngFor="let p of games()" class="col-md-6 col-lg-4">
-        <app-game-card [product]="p"></app-game-card>
-      </div>
-    </section>
-
-    <ng-template #empty>
+    @if (games().length > 0) {
+      <section class="game-grid row g-4" [attr.aria-label]="'Catálogo de juegos de ' + meta().title">
+        @for (p of games(); track p.id) {
+          <div class="col-md-6 col-lg-4">
+            <app-game-card [product]="p"></app-game-card>
+          </div>
+        }
+      </section>
+    } @else {
       <div class="empty-state">
         <h2>Aún no hay juegos en esta categoría</h2>
         <p>El catálogo está vacío por ahora. Vuelve más tarde.</p>
         <a class="btn btn-primary" [routerLink]="['/']">Volver al inicio</a>
       </div>
-    </ng-template>
+    }
 
     <div class="back-section">
       <a class="btn btn-ghost" [routerLink]="['/']">

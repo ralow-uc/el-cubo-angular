@@ -1,6 +1,6 @@
 <main>
   <div class="container">
-    <ng-container *ngIf="product() as p; else notFound">
+    @if (product(); as p) {
       <nav class="breadcrumb" aria-label="Migas de pan">
         <a [routerLink]="['/']">Inicio</a>
         <span aria-hidden="true">›</span>
@@ -12,7 +12,9 @@
       <article class="product-detail row g-4">
         <div class="col-md-6">
           <div class="game-media product-detail-media">
-            <span class="sale-badge" *ngIf="p.onSale">Oferta</span>
+            @if (p.onSale) {
+              <span class="sale-badge">Oferta</span>
+            }
             <img [src]="imageUrl(p.image)" [alt]="'Caja del juego ' + p.name" />
           </div>
         </div>
@@ -22,7 +24,9 @@
           <p class="game-desc product-detail-desc">{{ p.description }}</p>
 
           <div class="price product-detail-price">
-            <span class="price-old" *ngIf="p.oldPrice">{{ formatCLP(p.oldPrice) }}</span>
+            @if (p.oldPrice) {
+              <span class="price-old">{{ formatCLP(p.oldPrice) }}</span>
+            }
             <span class="price-now" [class.has-sale]="p.onSale">{{ formatCLP(p.price) }}</span>
           </div>
 
@@ -34,27 +38,29 @@
 
           <div class="product-actions">
             <a class="btn btn-ghost" [routerLink]="['/categoria', p.category]">Volver a {{ categoryTitle() }}</a>
-            <button
-              *ngIf="!isAdmin"
-              type="button"
-              class="btn btn-primary"
-              [disabled]="p.stock <= 0"
-              (click)="add()"
-            >
-              <ng-container *ngIf="p.stock > 0; else outOfStock">Agregar al carrito</ng-container>
-              <ng-template #outOfStock>Agotado</ng-template>
-            </button>
+            @if (!isAdmin) {
+              <button
+                type="button"
+                class="btn btn-primary"
+                [disabled]="p.stock <= 0"
+                (click)="add()"
+              >
+                @if (p.stock > 0) {
+                  Agregar al carrito
+                } @else {
+                  Agotado
+                }
+              </button>
+            }
           </div>
         </div>
       </article>
-    </ng-container>
-
-    <ng-template #notFound>
+    } @else {
       <div class="empty-state">
         <h2>Producto no encontrado</h2>
         <p>Es posible que haya sido eliminado o que el enlace esté equivocado.</p>
         <a class="btn btn-primary" [routerLink]="['/']">Volver al inicio</a>
       </div>
-    </ng-template>
+    }
   </div>
 </main>

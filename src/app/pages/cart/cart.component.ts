@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { CartService } from '../../services/cart.service';
 import { formatCLP, imageUrl } from '../../services/storage.util';
@@ -8,7 +7,7 @@ import { formatCLP, imageUrl } from '../../services/storage.util';
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, RouterLink],
   templateUrl: './cart.component.html',
 })
 export class CartComponent {

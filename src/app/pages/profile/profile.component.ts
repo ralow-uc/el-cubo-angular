@@ -1,99 +1,114 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { FormsModule, NgForm } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { User } from '../../models/user.model';
 import {
-  EMAIL_RE,
-  validatePasswordString,
+  ageValidator,
+  matchControlValidator,
+  passwordValidator,
 } from '../../validators/password.validator';
 import { formatDate } from '../../services/storage.util';
-
-interface ProfileForm {
-  fullName: string;
-  username: string;
-  email: string;
-  birthdate: string;
-  address: string;
-  newPassword: string;
-  newPasswordConfirm: string;
-}
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './profile.component.html',
 })
 export class ProfileComponent {
   private auth = inject(AuthService);
+  private fb = inject(FormBuilder);
 
   readonly formatDate = formatDate;
   readonly currentUser = this.auth.currentUser;
 
-  model: ProfileForm;
-  errors: Partial<Record<keyof ProfileForm, string>> = {};
   alertMsg: string | null = null;
   successMsg: string | null = null;
 
+  form;
+
   constructor() {
     const me = this.auth.currentUser()!;
-    this.model = this.fromUser(me);
+    this.form = this.fb.nonNullable.group({
+      fullName: [me.fullName, [Validators.required]],
+      username: [me.username, [Validators.required, Validators.pattern(/^\S+$/)]],
+      email: [me.email, [Validators.required, Validators.email]],
+      birthdate: [me.birthdate, [Validators.required, ageValidator]],
+      address: [me.address ?? ''],
+      newPassword: ['', [passwordValidator]],
+      newPasswordConfirm: ['', [matchControlValidator('newPassword')]],
+    });
+    this.form.controls.newPassword.setValidators([]);
+    this.form.controls.newPasswordConfirm.setValidators([]);
+    this.form.controls.newPassword.updateValueAndValidity();
+    this.form.controls.newPasswordConfirm.updateValueAndValidity();
   }
 
-  private fromUser(u: User): ProfileForm {
-    return {
-      fullName: u.fullName,
-      username: u.username,
-      email: u.email,
-      birthdate: u.birthdate,
-      address: u.address ?? '',
-      newPassword: '',
-      newPasswordConfirm: '',
-    };
+  get f() {
+    return this.form.controls;
   }
 
-  submit(form: NgForm): void {
+  errorOf(name: keyof typeof this.form.controls): string | null {
+    const ctrl = this.form.controls[name];
+    if (ctrl.valid || (!ctrl.touched && !ctrl.dirty)) return null;
+    const e = ctrl.errors;
+    if (!e) return null;
+    if (e['required']) return 'Este campo es obligatorio.';
+    if (e['pattern'] && name === 'username') return 'No puede contener espacios.';
+    if (e['email']) return 'El formato del correo no es válido.';
+    if (e['age']) return e['age'];
+    if (e['password']) return e['password'];
+    if (e['match']) return 'Las contraseñas no coinciden.';
+    if (e['taken']) return e['taken'];
+    return 'Valor inválido.';
+  }
+
+  submit(): void {
     this.alertMsg = null;
     this.successMsg = null;
-    this.errors = {};
 
-    if (!this.model.fullName.trim()) this.errors.fullName = 'Ingresa tu nombre completo.';
-    if (!this.model.username.trim()) this.errors.username = 'Elige un nombre de usuario.';
-    else if (/\s/.test(this.model.username.trim())) this.errors.username = 'No puede contener espacios.';
-    if (!this.model.email.trim()) this.errors.email = 'Ingresa tu correo electrónico.';
-    else if (!EMAIL_RE.test(this.model.email.trim())) this.errors.email = 'Formato inválido.';
-    if (!this.model.birthdate) this.errors.birthdate = 'Ingresa tu fecha de nacimiento.';
+    const wantsPwdChange = !!(
+      this.form.controls.newPassword.value ||
+      this.form.controls.newPasswordConfirm.value
+    );
 
-    let passwordPatch: { password?: string } = {};
-    if (this.model.newPassword || this.model.newPasswordConfirm) {
-      const pwdErr = validatePasswordString(this.model.newPassword);
-      if (pwdErr) this.errors.newPassword = pwdErr;
-      if (this.model.newPassword !== this.model.newPasswordConfirm) {
-        this.errors.newPasswordConfirm = 'Las contraseñas no coinciden.';
-      }
-      if (!this.errors.newPassword && !this.errors.newPasswordConfirm) {
-        passwordPatch = { password: this.model.newPassword };
-      }
+    if (wantsPwdChange) {
+      this.form.controls.newPassword.setValidators([Validators.required, passwordValidator]);
+      this.form.controls.newPasswordConfirm.setValidators([
+        Validators.required,
+        matchControlValidator('newPassword'),
+      ]);
+    } else {
+      this.form.controls.newPassword.setValidators([]);
+      this.form.controls.newPasswordConfirm.setValidators([]);
+    }
+    this.form.controls.newPassword.updateValueAndValidity();
+    this.form.controls.newPasswordConfirm.updateValueAndValidity();
+
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
     }
 
-    if (Object.keys(this.errors).length > 0) return;
-
+    const v = this.form.getRawValue();
     const me = this.auth.currentUser()!;
     try {
-      this.auth.update(me.id, {
-        fullName: this.model.fullName.trim(),
-        username: this.model.username.trim(),
-        email: this.model.email.trim(),
-        birthdate: this.model.birthdate,
-        address: this.model.address.trim(),
-        ...passwordPatch,
-      });
+      const patch: Record<string, unknown> = {
+        fullName: v.fullName.trim(),
+        username: v.username.trim(),
+        email: v.email.trim(),
+        birthdate: v.birthdate,
+        address: v.address.trim(),
+      };
+      if (wantsPwdChange) patch['password'] = v.newPassword;
+      this.auth.update(me.id, patch);
       this.successMsg = 'Perfil actualizado. Tus cambios se guardaron correctamente.';
-      this.model.newPassword = '';
-      this.model.newPasswordConfirm = '';
+      this.form.patchValue({ newPassword: '', newPasswordConfirm: '' });
     } catch (err) {
-      this.alertMsg = (err as Error).message;
+      const msg = (err as Error).message;
+      if (/usuario/i.test(msg)) this.form.controls.username.setErrors({ taken: msg });
+      else if (/correo/i.test(msg)) this.form.controls.email.setErrors({ taken: msg });
+      else this.alertMsg = msg;
     }
   }
 }

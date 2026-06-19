@@ -21,145 +21,154 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngIf="products().length === 0">
-            <td colspan="5" class="empty">Sin productos. Crea el primero.</td>
-          </tr>
-          <tr *ngFor="let p of products()">
-            <td>
-              <div class="admin-prod-cell">
-                <img [src]="imageUrl(p.image)" alt="" loading="lazy" />
-                <div>
-                  <strong>{{ p.name }}</strong>
-                  <small>{{ p.id }}</small>
+          @if (products().length === 0) {
+            <tr><td colspan="5" class="empty">Sin productos. Crea el primero.</td></tr>
+          }
+          @for (p of products(); track p.id) {
+            <tr>
+              <td>
+                <div class="admin-prod-cell">
+                  <img [src]="imageUrl(p.image)" alt="" loading="lazy" />
+                  <div>
+                    <strong>{{ p.name }}</strong>
+                    <small>{{ p.id }}</small>
+                  </div>
                 </div>
-              </div>
-            </td>
-            <td><span class="pill">{{ p.category }}</span></td>
-            <td class="num">
-              {{ formatCLP(p.price) }}
-              <small *ngIf="p.oldPrice" class="strikethrough">{{ formatCLP(p.oldPrice) }}</small>
-            </td>
-            <td class="num">
-              <span [class.stock-low]="p.stock <= 3">{{ p.stock }}</span>
-            </td>
-            <td class="actions">
-              <button type="button" class="btn-link" (click)="openEdit(p)">Editar</button>
-              <button type="button" class="btn-link btn-link--danger" (click)="remove(p)">Eliminar</button>
-            </td>
-          </tr>
+              </td>
+              <td><span class="pill">{{ p.category }}</span></td>
+              <td class="num">
+                {{ formatCLP(p.price) }}
+                @if (p.oldPrice) {
+                  <small class="strikethrough">{{ formatCLP(p.oldPrice) }}</small>
+                }
+              </td>
+              <td class="num">
+                <span [class.stock-low]="p.stock <= 3">{{ p.stock }}</span>
+              </td>
+              <td class="actions">
+                <button type="button" class="btn-link" (click)="openEdit(p)">Editar</button>
+                <button type="button" class="btn-link btn-link--danger" (click)="remove(p)">Eliminar</button>
+              </td>
+            </tr>
+          }
         </tbody>
       </table>
     </section>
 
-    <div class="admin-dialog-backdrop" *ngIf="open()" (click)="close()">
-      <div class="admin-dialog" (click)="$event.stopPropagation()" role="dialog">
-        <header class="admin-dialog-head">
-          <h2>{{ editingId ? 'Editar producto' : 'Nuevo producto' }}</h2>
-          <button type="button" class="admin-dialog-close" (click)="close()" aria-label="Cerrar">×</button>
-        </header>
-        <form #form="ngForm" (ngSubmit)="submit(form)" novalidate>
-          <div class="form-alert form-alert--error" *ngIf="alertMsg">{{ alertMsg }}</div>
+    @if (open()) {
+      <div class="admin-dialog-backdrop" (click)="close()">
+        <div class="admin-dialog" (click)="$event.stopPropagation()" role="dialog">
+          <header class="admin-dialog-head">
+            <h2>{{ editingId ? 'Editar producto' : 'Nuevo producto' }}</h2>
+            <button type="button" class="admin-dialog-close" (click)="close()" aria-label="Cerrar">×</button>
+          </header>
+          <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+            @if (alertMsg) {
+              <div class="form-alert form-alert--error">{{ alertMsg }}</div>
+            }
 
-          <div class="row">
-            <div class="col-md-4">
-              <div class="field">
-                <label class="form-label" for="p-id">ID</label>
-                <input type="text" class="form-control" id="p-id" name="id" required
-                       [(ngModel)]="model.id"
-                       [disabled]="!!editingId"
-                       [class.is-invalid]="!!errors.id" />
-                <div class="invalid-feedback" *ngIf="errors.id">{{ errors.id }}</div>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="field">
+                  <label class="form-label" for="p-id">ID</label>
+                  <input type="text" class="form-control" id="p-id" formControlName="id"
+                         [class.is-invalid]="!!errorOf('id')" />
+                  @if (errorOf('id'); as e) {
+                    <div class="invalid-feedback">{{ e }}</div>
+                  }
+                </div>
+              </div>
+              <div class="col-md-8">
+                <div class="field">
+                  <label class="form-label" for="p-name">Nombre</label>
+                  <input type="text" class="form-control" id="p-name" formControlName="name"
+                         [class.is-invalid]="!!errorOf('name')" />
+                  @if (errorOf('name'); as e) {
+                    <div class="invalid-feedback">{{ e }}</div>
+                  }
+                </div>
               </div>
             </div>
-            <div class="col-md-8">
-              <div class="field">
-                <label class="form-label" for="p-name">Nombre</label>
-                <input type="text" class="form-control" id="p-name" name="name" required
-                       [(ngModel)]="model.name"
-                       [class.is-invalid]="!!errors.name" />
-                <div class="invalid-feedback" *ngIf="errors.name">{{ errors.name }}</div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="field">
+                  <label class="form-label" for="p-cat">Categoría</label>
+                  <select class="form-control" id="p-cat" formControlName="category">
+                    <option value="estrategia">Estrategia</option>
+                    <option value="familiares">Familiares</option>
+                    <option value="cartas">Cartas</option>
+                    <option value="cooperativos">Cooperativos</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="field">
+                  <label class="form-label" for="p-players">Jugadores</label>
+                  <input type="text" class="form-control" id="p-players" formControlName="players"
+                         placeholder="2 – 4 jugadores" />
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="row">
-            <div class="col-md-6">
-              <div class="field">
-                <label class="form-label" for="p-cat">Categoría</label>
-                <select class="form-control" id="p-cat" name="category" [(ngModel)]="model.category">
-                  <option value="estrategia">Estrategia</option>
-                  <option value="familiares">Familiares</option>
-                  <option value="cartas">Cartas</option>
-                  <option value="cooperativos">Cooperativos</option>
-                </select>
+            <div class="field">
+              <label class="form-label" for="p-desc">Descripción</label>
+              <textarea class="form-control" id="p-desc" formControlName="description" rows="3"
+                        [class.is-invalid]="!!errorOf('description')"></textarea>
+              @if (errorOf('description'); as e) {
+                <div class="invalid-feedback">{{ e }}</div>
+              }
+            </div>
+
+            <div class="row">
+              <div class="col-md-4">
+                <div class="field">
+                  <label class="form-label" for="p-price">Precio</label>
+                  <input type="number" class="form-control" id="p-price" formControlName="price" min="0"
+                         [class.is-invalid]="!!errorOf('price')" />
+                  @if (errorOf('price'); as e) {
+                    <div class="invalid-feedback">{{ e }}</div>
+                  }
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="field">
+                  <label class="form-label" for="p-oldprice">Precio antes</label>
+                  <input type="number" class="form-control" id="p-oldprice" formControlName="oldPrice" min="0" />
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="field">
+                  <label class="form-label" for="p-stock">Stock</label>
+                  <input type="number" class="form-control" id="p-stock" formControlName="stock" min="0"
+                         [class.is-invalid]="!!errorOf('stock')" />
+                  @if (errorOf('stock'); as e) {
+                    <div class="invalid-feedback">{{ e }}</div>
+                  }
+                </div>
               </div>
             </div>
-            <div class="col-md-6">
-              <div class="field">
-                <label class="form-label" for="p-players">Jugadores</label>
-                <input type="text" class="form-control" id="p-players" name="players"
-                       placeholder="2 – 4 jugadores"
-                       [(ngModel)]="model.players" />
-              </div>
+
+            <div class="field">
+              <label class="form-label" for="p-image">Imagen (filename en assets/img/)</label>
+              <input type="text" class="form-control" id="p-image" formControlName="image"
+                     placeholder="catan.jpg" />
             </div>
-          </div>
 
-          <div class="field">
-            <label class="form-label" for="p-desc">Descripción</label>
-            <textarea class="form-control" id="p-desc" name="description" rows="3" required
-                      [(ngModel)]="model.description"
-                      [class.is-invalid]="!!errors.description"></textarea>
-            <div class="invalid-feedback" *ngIf="errors.description">{{ errors.description }}</div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-4">
-              <div class="field">
-                <label class="form-label" for="p-price">Precio</label>
-                <input type="number" class="form-control" id="p-price" name="price" min="0" required
-                       [(ngModel)]="model.price"
-                       [class.is-invalid]="!!errors.price" />
-                <div class="invalid-feedback" *ngIf="errors.price">{{ errors.price }}</div>
-              </div>
+            <div class="field">
+              <label class="form-check">
+                <input type="checkbox" class="form-check-input" formControlName="onSale" />
+                <span class="form-check-label">Marcar como oferta</span>
+              </label>
             </div>
-            <div class="col-md-4">
-              <div class="field">
-                <label class="form-label" for="p-oldprice">Precio antes</label>
-                <input type="number" class="form-control" id="p-oldprice" name="oldPrice" min="0"
-                       [(ngModel)]="model.oldPrice" />
-              </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-ghost" (click)="close()">Cancelar</button>
+              <button type="submit" class="btn btn-primary">{{ editingId ? 'Guardar' : 'Crear' }}</button>
             </div>
-            <div class="col-md-4">
-              <div class="field">
-                <label class="form-label" for="p-stock">Stock</label>
-                <input type="number" class="form-control" id="p-stock" name="stock" min="0" required
-                       [(ngModel)]="model.stock"
-                       [class.is-invalid]="!!errors.stock" />
-                <div class="invalid-feedback" *ngIf="errors.stock">{{ errors.stock }}</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="field">
-            <label class="form-label" for="p-image">Imagen (filename en assets/img/)</label>
-            <input type="text" class="form-control" id="p-image" name="image"
-                   placeholder="catan.jpg"
-                   [(ngModel)]="model.image" />
-          </div>
-
-          <div class="field">
-            <label class="form-check">
-              <input type="checkbox" class="form-check-input" name="onSale" [(ngModel)]="model.onSale" />
-              <span class="form-check-label">Marcar como oferta</span>
-            </label>
-          </div>
-
-          <div class="form-actions">
-            <button type="button" class="btn btn-ghost" (click)="close()">Cancelar</button>
-            <button type="submit" class="btn btn-primary">{{ editingId ? 'Guardar' : 'Crear' }}</button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
-    </div>
+    }
   </div>
 </main>

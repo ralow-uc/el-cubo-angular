@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { Product } from '../../../models/product.model';
 import { ProductService } from '../../../services/product.service';
 import { imageUrl } from '../../../services/storage.util';
@@ -8,7 +7,7 @@ import { imageUrl } from '../../../services/storage.util';
 @Component({
   selector: 'app-admin-inventory',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule],
   templateUrl: './admin-inventory.component.html',
 })
 export class AdminInventoryComponent {

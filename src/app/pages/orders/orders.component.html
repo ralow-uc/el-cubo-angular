@@ -6,30 +6,34 @@
       <p>Aquí están todas las compras que has realizado en El Cubo.</p>
     </header>
 
-    <section *ngIf="orders.length > 0; else empty" class="orders-list">
-      <article *ngFor="let o of orders" class="order-card">
-        <header class="order-card-head">
-          <div>
-            <span class="eyebrow">{{ o.id }}</span>
-            <h3>{{ formatDate(o.createdAt) }}</h3>
-          </div>
-          <strong class="order-total">{{ formatCLP(o.total) }}</strong>
-        </header>
-        <ul class="order-items">
-          <li *ngFor="let it of o.items">
-            <span>{{ it.name }} <em>× {{ it.qty }}</em></span>
-            <strong>{{ formatCLP(it.subtotal) }}</strong>
-          </li>
-        </ul>
-      </article>
-    </section>
-
-    <ng-template #empty>
+    @if (orders.length > 0) {
+      <section class="orders-list">
+        @for (o of orders; track o.id) {
+          <article class="order-card">
+            <header class="order-card-head">
+              <div>
+                <span class="eyebrow">{{ o.id }}</span>
+                <h3>{{ formatDate(o.createdAt) }}</h3>
+              </div>
+              <strong class="order-total">{{ formatCLP(o.total) }}</strong>
+            </header>
+            <ul class="order-items">
+              @for (it of o.items; track it.productId) {
+                <li>
+                  <span>{{ it.name }} <em>× {{ it.qty }}</em></span>
+                  <strong>{{ formatCLP(it.subtotal) }}</strong>
+                </li>
+              }
+            </ul>
+          </article>
+        }
+      </section>
+    } @else {
       <div class="empty-state">
         <h2>Aún no tienes pedidos</h2>
         <p>Cuando completes una compra, aparecerá acá.</p>
         <a class="btn btn-primary" [routerLink]="['/']">Ir al catálogo</a>
       </div>
-    </ng-template>
+    }
   </div>
 </main>

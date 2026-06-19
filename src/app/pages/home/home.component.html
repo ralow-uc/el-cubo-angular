@@ -45,27 +45,26 @@
       </div>
 
       <div class="category-grid row g-4">
-        <div
-          *ngFor="let cat of categories"
-          [class]="cat.size === 'wide' ? 'col-md-6 col-lg-8' : 'col-md-6 col-lg-4'"
-        >
-          <a class="category-card" [class.category-card--wide]="cat.size === 'wide'" [routerLink]="['/categoria', cat.slug]">
-            <div class="category-media">
-              <img [src]="'assets/img/' + cat.image" [alt]="cat.alt" width="960" height="720" loading="lazy" />
-            </div>
-            <div class="category-body">
-              <div>
-                <h3>{{ cat.title }}</h3>
-                <p>{{ cat.blurb }}</p>
+        @for (cat of categories; track cat.slug) {
+          <div [class]="cat.size === 'wide' ? 'col-md-6 col-lg-8' : 'col-md-6 col-lg-4'">
+            <a class="category-card" [class.category-card--wide]="cat.size === 'wide'" [routerLink]="['/categoria', cat.slug]">
+              <div class="category-media">
+                <img [src]="'assets/img/' + cat.image" [alt]="cat.alt" width="960" height="720" loading="lazy" />
               </div>
-              <span class="category-arrow" aria-hidden="true">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                  <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </span>
-            </div>
-          </a>
-        </div>
+              <div class="category-body">
+                <div>
+                  <h3>{{ cat.title }}</h3>
+                  <p>{{ cat.blurb }}</p>
+                </div>
+                <span class="category-arrow" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </div>
+            </a>
+          </div>
+        }
       </div>
     </div>
   </section>

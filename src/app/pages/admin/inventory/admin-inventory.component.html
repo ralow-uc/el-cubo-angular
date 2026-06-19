@@ -20,32 +20,33 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let p of list()">
-            <td>
-              <div class="admin-prod-cell">
-                <img [src]="imageUrl(p.image)" alt="" loading="lazy" />
-                <div>
-                  <strong>{{ p.name }}</strong>
-                  <small>{{ p.id }}</small>
+          @for (p of list(); track p.id) {
+            <tr>
+              <td>
+                <div class="admin-prod-cell">
+                  <img [src]="imageUrl(p.image)" alt="" loading="lazy" />
+                  <div>
+                    <strong>{{ p.name }}</strong>
+                    <small>{{ p.id }}</small>
+                  </div>
                 </div>
-              </div>
-            </td>
-            <td><span class="pill">{{ p.category }}</span></td>
-            <td class="num">{{ p.stock }}</td>
-            <td>
-              <span class="state {{ stockState(p).cls }}">{{ stockState(p).label }}</span>
-            </td>
-            <td class="actions">
-              <div class="qty-adjust">
-                <button type="button" class="qty-btn" (click)="dec(p)">−</button>
-                <input type="number" class="qty-input" min="0"
-                       [ngModel]="p.stock"
-                       (ngModelChange)="setStock(p, $event)"
-                       [name]="'stock_' + p.id" />
-                <button type="button" class="qty-btn" (click)="inc(p)">+</button>
-              </div>
-            </td>
-          </tr>
+              </td>
+              <td><span class="pill">{{ p.category }}</span></td>
+              <td class="num">{{ p.stock }}</td>
+              <td>
+                <span class="state {{ stockState(p).cls }}">{{ stockState(p).label }}</span>
+              </td>
+              <td class="actions">
+                <div class="qty-adjust">
+                  <button type="button" class="qty-btn" (click)="dec(p)">−</button>
+                  <input type="number" class="qty-input" min="0"
+                         [value]="p.stock"
+                         (input)="setStock(p, $any($event.target).value)" />
+                  <button type="button" class="qty-btn" (click)="inc(p)">+</button>
+                </div>
+              </td>
+            </tr>
+          }
         </tbody>
       </table>
     </section>
