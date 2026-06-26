@@ -9,6 +9,16 @@ import {
   passwordValidator,
 } from '../../validators/password.validator';
 
+/**
+ * Página de registro de usuario nuevo.
+ *
+ * Implementa Reactive Forms con todas las validaciones de la pauta:
+ * email válido, password 6-18 con mayúscula + número, confirmación de
+ * password, edad mínima de 13 años y dirección de despacho opcional.
+ *
+ * Incluye botones de enviar y limpiar, y un atajo de desarrollo para
+ * rellenar con datos dummy (útil para QA manual).
+ */
 @Component({
   selector: 'app-register',
   standalone: true,
@@ -40,6 +50,7 @@ export class RegisterComponent {
     password: ['', [Validators.required, passwordValidator]],
     passwordConfirm: ['', [Validators.required, matchControlValidator('password')]],
     birthdate: ['', [Validators.required, ageValidator]],
+    /** La pauta indica que la dirección de despacho es opcional. */
     address: [''],
   });
 
@@ -47,6 +58,7 @@ export class RegisterComponent {
     return this.form.controls;
   }
 
+  /** Rellena el formulario con datos válidos al azar (atajo de desarrollo). */
   fillDummy(): void {
     const rand = Math.random().toString(36).slice(2, 5);
     this.form.setValue({
@@ -60,6 +72,7 @@ export class RegisterComponent {
     });
   }
 
+  /** Limpia todos los campos del formulario y cualquier alerta visible. */
   clear(): void {
     this.form.reset();
     this.alertMsg = null;
@@ -85,6 +98,21 @@ export class RegisterComponent {
     return 'Valor inválido.';
   }
 
+  /**
+   * @description
+   * Maneja el submit del formulario de registro:
+   *  1. Marca los controles como `touched` si hay errores.
+   *  2. Llama a `AuthService.create()` con los datos validados.
+   *  3. Muestra la pantalla de éxito o asigna el error al control específico.
+   *
+   * @returns void
+   *
+   * @usageNotes
+   * Se conecta desde el template:
+   * ```html
+   * <form [formGroup]="form" (ngSubmit)="submit()">
+   * ```
+   */
   submit(): void {
     this.alertMsg = null;
     if (this.form.invalid) {

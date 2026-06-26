@@ -29,21 +29,25 @@ Artefactos en `dist/el-cubo/`.
 ## Pruebas unitarias
 
 ```bash
-npm test
-```
-
-Corre Jasmine + Karma con Chrome Headless. Para una sola corrida (CI):
-
-```bash
 npm test -- --watch=false --browsers=ChromeHeadless
 ```
 
-Tests existentes:
+Corre Jasmine + Karma. Suites incluidas:
 
-- `validators/password.validator.spec.ts` — reglas de password, edad ≥13, match de controles.
+- `validators/password.validator.spec.ts` — reglas de password, edad, match de controles.
 - `services/auth.service.spec.ts` — login, logout, seed, validaciones de unicidad.
 - `services/product.service.spec.ts` — CRUD de productos, búsqueda por id/categoría.
 - `pages/login/login.component.spec.ts` — Reactive Form valid/inválido, submit.
+- `pages/register/register.component.spec.ts` — email inválido, password mínima válida, edad <13, limpieza, dirección opcional.
+
+## Documentación (Compodoc)
+
+```bash
+npm run docs        # genera documentation/ en disco
+npm run docs:serve  # genera y sirve en http://localhost:8080
+```
+
+La documentación cubre componentes, servicios, guards, validators, interfaces y rutas, generada con tema `material`.
 
 ## Cuentas demo
 
@@ -66,7 +70,7 @@ src/app/
 │   ├── login/ register/ recover-password/ profile/
 │   ├── cart/ checkout/ orders/
 │   └── admin/         ← dashboard, products, users, inventory
-├── services/          ← AuthService, ProductService, CartService, OrderService
+├── services/          ← AuthService, ProductService, CartService, OrderService, ToastService
 ├── guards/            ← authGuard, adminGuard funcionales
 ├── validators/        ← passwordValidator, ageValidator, matchControlValidator, cardExpiryValidator
 ├── models/            ← interfaces TypeScript (User, Product, Cart, Order)
@@ -76,17 +80,19 @@ src/app/
 ## Stack
 
 - Angular 19 con standalone components y signals
-- **Reactive Forms** con validators custom para todos los formularios
-- **Control flow moderno** (`@if`, `@for`) — sin directivas estructurales legacy
+- **Reactive Forms** con validators custom para todos los formularios principales
+- **`[(ngModel)]`** en los inputs sueltos de cantidad (carrito e inventario)
+- **Control flow moderno** `@if` / `@for` en todas las plantillas
 - Bootstrap 5 (instalado vía npm, importado en `angular.json`)
 - Routing con guards funcionales (`authGuard`, `adminGuard`)
 - Persistencia en `localStorage` encapsulada en servicios singleton
 - Jasmine + Karma para tests unitarios
+- Compodoc para generación de documentación
 
 ## Validaciones de formularios
 
-- **Email** con formato válido
-- **Password** entre 8 y 18 caracteres, con mayúscula, minúscula, número y carácter especial
+- **Email** con formato válido (`Validators.email`)
+- **Password** entre 6 y 18 caracteres, con al menos una mayúscula y un número
 - **Confirmación de password** debe coincidir
 - **Edad mínima** de 13 años calculada desde la fecha de nacimiento
 - **Dirección de despacho** opcional

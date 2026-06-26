@@ -9,6 +9,13 @@ import { ToastService } from '../../services/toast.service';
 import { CATEGORY_LABELS } from '../../data/seed';
 import { formatCLP, imageUrl } from '../../services/storage.util';
 
+/**
+ * Ficha individual de un producto. Lee el `:id` de la URL, busca el
+ * producto en `ProductService.byId()` y muestra su detalle (precio,
+ * stock, descripción) con la opción de agregar al carrito.
+ *
+ * Demuestra el paso de datos entre componentes vía parámetros de ruta.
+ */
 @Component({
   selector: 'app-product-detail',
   standalone: true,

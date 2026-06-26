@@ -5,6 +5,10 @@ import { Product } from '../../../models/product.model';
 import { ProductService } from '../../../services/product.service';
 import { formatCLP, imageUrl } from '../../../services/storage.util';
 
+/**
+ * Mantenedor de productos del catálogo. Lista todos los items en una
+ * tabla y abre un modal con Reactive Form para crear o editar.
+ */
 @Component({
   selector: 'app-admin-products',
   standalone: true,

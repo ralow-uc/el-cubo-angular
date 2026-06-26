@@ -20,8 +20,9 @@
                 <div class="cart-line-qty">
                   <button type="button" class="qty-btn" (click)="dec(line.product.id, line.qty)" aria-label="Quitar uno">−</button>
                   <input type="number" class="qty-input"
-                         [value]="line.qty"
-                         (input)="updateQty(line.product.id, $any($event.target).value)"
+                         [ngModel]="line.qty"
+                         (ngModelChange)="updateQty(line.product.id, $event)"
+                         [name]="'qty_' + line.product.id"
                          min="0" [max]="line.product.stock" />
                   <button type="button" class="qty-btn" (click)="inc(line.product.id, line.qty)"
                           [disabled]="line.qty >= line.product.stock" aria-label="Agregar uno">+</button>

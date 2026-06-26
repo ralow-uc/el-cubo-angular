@@ -90,7 +90,7 @@
                 <input type="password" class="form-control" id="password" formControlName="password"
                        autocomplete="new-password"
                        [class.is-invalid]="!!errorOf('password')" />
-                <p class="form-help">8-18 caracteres, con mayúscula, minúscula, número y carácter especial.</p>
+                <p class="form-help">6-18 caracteres, con al menos una mayúscula y un número.</p>
                 @if (errorOf('password'); as e) {
                   <div class="invalid-feedback">{{ e }}</div>
                 }

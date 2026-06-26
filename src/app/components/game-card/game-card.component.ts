@@ -7,6 +7,13 @@ import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
 import { formatCLP, imageUrl } from '../../services/storage.util';
 
+/**
+ * Card reutilizable que muestra un producto con su imagen, precio,
+ * descripción y botón "Agregar al carrito".
+ *
+ * Recibe el producto por `@Input` (paso de datos entre componentes) y
+ * dispara el agregado al carrito vía `CartService` cuando corresponde.
+ */
 @Component({
   selector: 'app-game-card',
   standalone: true,
@@ -14,6 +21,7 @@ import { formatCLP, imageUrl } from '../../services/storage.util';
   templateUrl: './game-card.component.html',
 })
 export class GameCardComponent {
+  /** Producto que se renderiza en la card. */
   @Input({ required: true }) product!: Product;
 
   private auth = inject(AuthService);

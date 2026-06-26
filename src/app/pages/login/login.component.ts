@@ -4,6 +4,13 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
+/**
+ * Página de inicio de sesión.
+ *
+ * Usa Reactive Forms con dos campos (`login`, `password`). Si la sesión
+ * ya está activa redirige al home automáticamente. Tras un login exitoso
+ * navega al panel admin o al home según el rol del usuario.
+ */
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -28,6 +35,7 @@ export class LoginComponent {
     }
   }
 
+  /** Maneja el submit del formulario: autentica y redirige según rol. */
   submit(): void {
     this.alertMsg = null;
     if (this.form.invalid) {

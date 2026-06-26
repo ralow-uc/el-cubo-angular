@@ -6,6 +6,11 @@ import { OrderService } from '../../../services/order.service';
 import { ProductService } from '../../../services/product.service';
 import { formatCLP } from '../../../services/storage.util';
 
+/**
+ * Dashboard del panel admin. Calcula estadísticas globales del sitio
+ * (productos, usuarios, pedidos, ventas, stock) en una signal `computed`
+ * que se actualiza automáticamente cuando cambia cualquier servicio.
+ */
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,

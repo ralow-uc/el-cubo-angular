@@ -9,6 +9,14 @@ import {
 } from '../../validators/password.validator';
 import { formatDate } from '../../services/storage.util';
 
+/**
+ * Página de edición de perfil del usuario logueado.
+ *
+ * Permite actualizar datos personales (nombre, usuario, correo, fecha de
+ * nacimiento, dirección) y opcionalmente cambiar la contraseña. Las
+ * validaciones de password se activan solo si el usuario empieza a
+ * escribirla, evitando bloquear el submit cuando no quiere cambiarla.
+ */
 @Component({
   selector: 'app-profile',
   standalone: true,

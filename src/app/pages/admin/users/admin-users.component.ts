@@ -9,6 +9,11 @@ import {
 } from '../../../validators/password.validator';
 import { formatDate } from '../../../services/storage.util';
 
+/**
+ * Mantenedor de usuarios del sistema. Permite crear admins o clientes y
+ * editar los datos de cualquier usuario. La validación de password se
+ * activa solo cuando es obligatoria (alta o cambio explícito).
+ */
 @Component({
   selector: 'app-admin-users',
   standalone: true,

@@ -1,13 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Product } from '../../../models/product.model';
 import { ProductService } from '../../../services/product.service';
 import { imageUrl } from '../../../services/storage.util';
 
+/**
+ * Mantenedor de inventario. Lista los productos con sus niveles de stock
+ * y permite ajustar las cantidades inline con `[(ngModel)]` o con los
+ * botones +/-.
+ */
 @Component({
   selector: 'app-admin-inventory',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './admin-inventory.component.html',
 })
 export class AdminInventoryComponent {

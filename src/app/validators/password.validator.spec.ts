@@ -1,4 +1,4 @@
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import {
   ageValidator,
   calcAge,
@@ -6,28 +6,36 @@ import {
   passwordValidator,
   validatePasswordString,
 } from './password.validator';
-import { FormGroup } from '@angular/forms';
 
 describe('validatePasswordString', () => {
-  it('devuelve null para una contraseña que cumple las 5 reglas', () => {
+  it('acepta una contraseña de 6 caracteres con mayúscula y número', () => {
+    expect(validatePasswordString('Abc123')).toBeNull();
+  });
+
+  it('acepta contraseñas más largas que cumplen las reglas', () => {
     expect(validatePasswordString('Cubo2026!')).toBeNull();
   });
 
-  it('exige al menos 8 caracteres', () => {
-    expect(validatePasswordString('Ab1!')).toMatch(/al menos 8/);
+  it('rechaza menos de 6 caracteres', () => {
+    expect(validatePasswordString('Ab12')).toMatch(/al menos 6/);
   });
 
   it('rechaza más de 18 caracteres', () => {
-    expect(validatePasswordString('A1!aaaaaaaaaaaaaaaaaaaaaa')).toMatch(
+    expect(validatePasswordString('Abcdefghij1234567890')).toMatch(
       /no puede tener más de 18/i
     );
   });
 
-  it('exige mayúscula, minúscula, dígito y carácter especial', () => {
-    expect(validatePasswordString('abcdefgh')).toMatch(/mayúscula/);
-    expect(validatePasswordString('ABCDEFGH1!')).toMatch(/minúscula/);
-    expect(validatePasswordString('Abcdefgh!')).toMatch(/número/);
-    expect(validatePasswordString('Abcdefg1')).toMatch(/especial/);
+  it('exige al menos una mayúscula', () => {
+    expect(validatePasswordString('abc123')).toMatch(/mayúscula/);
+  });
+
+  it('exige al menos un número', () => {
+    expect(validatePasswordString('Abcdef')).toMatch(/número/);
+  });
+
+  it('NO exige minúscula ni carácter especial', () => {
+    expect(validatePasswordString('ABC123')).toBeNull();
   });
 
   it('rechaza vacío', () => {
@@ -44,7 +52,7 @@ describe('passwordValidator (Angular)', () => {
   });
 
   it('no asigna error cuando pasa', () => {
-    const ctrl = new FormControl('Cubo2026!');
+    const ctrl = new FormControl('Abc123');
     expect(passwordValidator(ctrl)).toBeNull();
   });
 });

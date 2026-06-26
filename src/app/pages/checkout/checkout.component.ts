@@ -9,6 +9,15 @@ import { Order } from '../../models/order.model';
 import { formatCLP } from '../../services/storage.util';
 import { cardExpiryValidator } from '../../validators/password.validator';
 
+/**
+ * Página de pago simulado.
+ *
+ * Recoge datos de despacho y de tarjeta con validaciones (dígitos, formato
+ * MM/AA, CVV de 3-4) y, si todo es válido, genera la orden vía OrderService
+ * y muestra la pantalla de éxito con el id del pedido.
+ *
+ * No se conecta a ninguna pasarela real: el pago se simula.
+ */
 @Component({
   selector: 'app-checkout',
   standalone: true,

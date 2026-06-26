@@ -7,6 +7,12 @@ import { STORAGE_KEYS, read, write } from './storage.util';
 
 type AllOrders = Record<string, Order[]>;
 
+/**
+ * Historial de pedidos por usuario, persistido en `localStorage`.
+ *
+ * El método `place()` genera una orden a partir del carrito actual,
+ * descuenta el stock de cada producto y vacía el carrito en un solo paso.
+ */
 @Injectable({ providedIn: 'root' })
 export class OrderService {
   private auth = inject(AuthService);
@@ -25,16 +31,38 @@ export class OrderService {
     this.allOrders.set({ ...orders });
   }
 
+  /** Devuelve los pedidos del usuario indicado, o del usuario logueado si se omite. */
   byUser(userId?: string): Order[] {
     const id = userId ?? this.auth.session()?.userId;
     if (!id) return [];
     return this.allOrders()[id] ?? [];
   }
 
+  /** Junta los pedidos de TODOS los usuarios. Usado por el dashboard admin. */
   allByEveryUser(): Order[] {
     return Object.values(this.allOrders()).flat();
   }
 
+  /**
+   * @description
+   * Finaliza la compra del usuario logueado en un solo paso atómico:
+   *  1. Genera la orden con el contenido actual del carrito.
+   *  2. Descuenta el stock de cada producto vendido.
+   *  3. Vacía el carrito.
+   *
+   * @returns La orden creada (con id, items, total y timestamp).
+   * @throws Error si no hay sesión activa o si el carrito está vacío.
+   *
+   * @usageNotes
+   * ```ts
+   * try {
+   *   const order = orderService.place();
+   *   router.navigate(['/pedidos']);
+   * } catch (e) {
+   *   alertMsg = (e as Error).message;
+   * }
+   * ```
+   */
   place(): Order {
     const s = this.auth.session();
     if (!s) throw new Error('Debes iniciar sesión.');

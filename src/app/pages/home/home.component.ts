@@ -12,6 +12,10 @@ interface CategoryCard {
   size: 'wide' | 'narrow';
 }
 
+/**
+ * Página de inicio. Muestra el hero, las 4 categorías navegables y el
+ * conteo dinámico de juegos en el catálogo.
+ */
 @Component({
   selector: 'app-home',
   standalone: true,

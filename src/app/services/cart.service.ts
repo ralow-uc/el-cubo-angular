@@ -6,6 +6,16 @@ import { STORAGE_KEYS, read, write } from './storage.util';
 
 type AllCarts = Record<string, CartMap>;
 
+/**
+ * Carrito de compras por usuario, persistido en `localStorage`.
+ *
+ * El estado vive en una signal `allCarts` indexada por `userId`. Las
+ * lecturas (`currentCart`, `lines`, `count`, `total`) son `computed`
+ * y se actualizan automáticamente cuando cambia el carrito o la sesión.
+ *
+ * Las operaciones de escritura están protegidas: requieren sesión y
+ * bloquean al rol admin (que no puede comprar).
+ */
 @Injectable({ providedIn: 'root' })
 export class CartService {
   private auth = inject(AuthService);
@@ -58,6 +68,7 @@ export class CartService {
     return fn(s.userId);
   }
 
+  /** Suma `qty` unidades del producto al carrito del usuario logueado. */
   add(productId: string, qty = 1): void {
     const s = this.auth.session();
     if (!s) throw new Error('Debes iniciar sesión para agregar al carrito.');
@@ -70,6 +81,7 @@ export class CartService {
     this.persist(carts);
   }
 
+  /** Fija la cantidad exacta del producto. Si `qty <= 0` lo remueve. */
   setQty(productId: string, qty: number): void {
     this.withUser((userId) => {
       const carts = { ...this.allCarts() };
@@ -81,10 +93,12 @@ export class CartService {
     });
   }
 
+  /** Quita el producto del carrito. */
   remove(productId: string): void {
     this.setQty(productId, 0);
   }
 
+  /** Vacía el carrito del usuario logueado. */
   clear(): void {
     this.withUser((userId) => {
       const carts = { ...this.allCarts() };

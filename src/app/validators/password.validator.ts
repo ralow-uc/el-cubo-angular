@@ -1,11 +1,37 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
+/**
+ * @description
+ * Reglas de contraseña exigidas por la pauta de la actividad:
+ *  - Longitud entre 6 y 18 caracteres.
+ *  - Al menos 1 letra mayúscula.
+ *  - Al menos 1 dígito.
+ *
+ * Se omite intencionalmente la obligación de minúscula y carácter especial
+ * para no rechazar contraseñas válidas según el enunciado.
+ */
 const RULES = {
-  minLength: 8,
+  minLength: 6,
   maxLength: 18,
-  specialPattern: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]/,
 };
 
+/**
+ * @description
+ * Valida una contraseña como string puro contra las reglas oficiales.
+ *
+ * Útil para escenarios donde no se quiere usar la API de Angular Forms
+ * (por ejemplo, lógica de servicios o tests directos).
+ *
+ * @param value Contraseña a validar.
+ * @returns `null` si la contraseña es válida; un mensaje legible en otro caso.
+ *
+ * @usageNotes
+ * ```ts
+ * validatePasswordString('Abc123')   // null
+ * validatePasswordString('abc')      // 'Debe tener al menos 6 caracteres.'
+ * validatePasswordString('abcdef')   // 'Debe incluir al menos una letra mayúscula.'
+ * ```
+ */
 export function validatePasswordString(value: string): string | null {
   if (!value) return 'Ingresa una contraseña.';
   if (value.length < RULES.minLength)
@@ -13,13 +39,23 @@ export function validatePasswordString(value: string): string | null {
   if (value.length > RULES.maxLength)
     return `No puede tener más de ${RULES.maxLength} caracteres.`;
   if (!/[A-Z]/.test(value)) return 'Debe incluir al menos una letra mayúscula.';
-  if (!/[a-z]/.test(value)) return 'Debe incluir al menos una letra minúscula.';
   if (!/\d/.test(value)) return 'Debe incluir al menos un número.';
-  if (!RULES.specialPattern.test(value))
-    return 'Debe incluir al menos un carácter especial (!@#$%…).';
   return null;
 }
 
+/**
+ * @description
+ * Validator de Angular Reactive Forms que envuelve `validatePasswordString`
+ * para integrarse directamente en un `FormControl`.
+ *
+ * @param control Control del formulario que contiene la contraseña.
+ * @returns `null` si pasa, o `{ password: mensaje }` si falla.
+ *
+ * @usageNotes
+ * ```ts
+ * password: ['', [Validators.required, passwordValidator]]
+ * ```
+ */
 export const passwordValidator: ValidatorFn = (
   control: AbstractControl
 ): ValidationErrors | null => {
@@ -27,6 +63,21 @@ export const passwordValidator: ValidatorFn = (
   return err ? { password: err } : null;
 };
 
+/**
+ * @description
+ * Calcula la edad cumplida en años a partir de una fecha ISO. Tiene en
+ * cuenta el cumpleaños del año actual: si todavía no se cumplió, devuelve
+ * un año menos.
+ *
+ * @param isoDate Fecha en formato ISO (`YYYY-MM-DD` o ISO completo).
+ * @returns Edad en años cumplidos, o `-1` si la fecha es inválida.
+ *
+ * @usageNotes
+ * ```ts
+ * calcAge('2000-05-15')  // 26 (hoy, junio 2026)
+ * calcAge('')            // -1
+ * ```
+ */
 export function calcAge(isoDate: string): number {
   if (!isoDate) return -1;
   const birth = new Date(isoDate);
@@ -38,6 +89,20 @@ export function calcAge(isoDate: string): number {
   return age;
 }
 
+/**
+ * @description
+ * Validator que exige al menos 13 años cumplidos. Acepta vacío como
+ * "no validar" (no marca `required`); úselo combinado con `Validators.required`
+ * cuando el campo sea obligatorio.
+ *
+ * @param control Control que contiene la fecha de nacimiento (ISO).
+ * @returns `null` si pasa, o `{ age: mensaje }` si la edad no es válida.
+ *
+ * @usageNotes
+ * ```ts
+ * birthdate: ['', [Validators.required, ageValidator]]
+ * ```
+ */
 export const ageValidator: ValidatorFn = (
   control: AbstractControl
 ): ValidationErrors | null => {
@@ -50,6 +115,22 @@ export const ageValidator: ValidatorFn = (
   return null;
 };
 
+/**
+ * @description
+ * Validator factory que exige que un control tenga el mismo valor que otro
+ * control del mismo `FormGroup`. Útil para la confirmación de contraseña.
+ *
+ * @param otherControlName Nombre del control con el que se debe coincidir.
+ * @returns ValidatorFn aplicable a un control hermano dentro del mismo grupo.
+ *
+ * @usageNotes
+ * ```ts
+ * this.fb.group({
+ *   password:        ['', [passwordValidator]],
+ *   passwordConfirm: ['', [matchControlValidator('password')]]
+ * })
+ * ```
+ */
 export function matchControlValidator(otherControlName: string): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const parent = control.parent;
@@ -60,6 +141,20 @@ export function matchControlValidator(otherControlName: string): ValidatorFn {
   };
 }
 
+/**
+ * @description
+ * Validator del vencimiento de tarjeta con formato `MM/AA`. Rechaza tanto
+ * el formato inválido como las tarjetas vencidas (comparando con la fecha
+ * actual).
+ *
+ * @param control Control que contiene el vencimiento como texto `MM/AA`.
+ * @returns `null` si pasa, o `{ cardExpiry: mensaje }` si falla.
+ *
+ * @usageNotes
+ * ```ts
+ * cardExpiry: ['', [Validators.required, cardExpiryValidator]]
+ * ```
+ */
 export function cardExpiryValidator(
   control: AbstractControl
 ): ValidationErrors | null {
@@ -78,4 +173,10 @@ export function cardExpiryValidator(
   return null;
 }
 
+/**
+ * @description
+ * Regex pragmática para validar el formato general de un email.
+ * Usada por validators custom cuando necesitan validar contra strings
+ * en lugar de un `FormControl`.
+ */
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

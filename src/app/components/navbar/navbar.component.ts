@@ -6,6 +6,14 @@ import { CartService } from '../../services/cart.service';
 
 type OpenMenu = 'catalogo' | 'admin' | 'cuenta' | null;
 
+/**
+ * Navbar global del sitio. Cambia dinámicamente según la sesión activa
+ * y el rol del usuario (catálogo siempre, admin solo para administradores,
+ * cuenta/carrito para clientes, login/registro para no logueados).
+ *
+ * Maneja sus propios dropdowns en signals para evitar dependencia de
+ * Bootstrap JS.
+ */
 @Component({
   selector: 'app-navbar',
   standalone: true,

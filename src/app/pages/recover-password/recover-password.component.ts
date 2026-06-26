@@ -8,6 +8,15 @@ import {
   passwordValidator,
 } from '../../validators/password.validator';
 
+/**
+ * Página de recuperación de contraseña en dos pasos:
+ *
+ *  1. El usuario ingresa su correo, que se valida contra el padrón.
+ *  2. Si existe, se le permite definir una nueva contraseña directamente.
+ *
+ * Este flow reemplaza al anterior que mostraba una clave temporal,
+ * siguiendo la sugerencia del docente.
+ */
 @Component({
   selector: 'app-recover-password',
   standalone: true,

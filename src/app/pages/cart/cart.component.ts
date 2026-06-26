@@ -1,13 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { CartService } from '../../services/cart.service';
 import { formatCLP, imageUrl } from '../../services/storage.util';
 
+/**
+ * Página del carrito de compras.
+ *
+ * Lista los productos agregados con su cantidad editable, subtotal y
+ * total. Los inputs de cantidad usan `[(ngModel)]` para edición directa.
+ */
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './cart.component.html',
 })
 export class CartComponent {

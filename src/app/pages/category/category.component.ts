@@ -6,6 +6,12 @@ import { ProductService } from '../../services/product.service';
 import { CATEGORY_LABELS } from '../../data/seed';
 import { GameCardComponent } from '../../components/game-card/game-card.component';
 
+/**
+ * Página única para todas las categorías. Lee el `:slug` de la URL,
+ * filtra el catálogo en `ProductService.byCategory()` y muestra los
+ * juegos correspondientes. Reemplaza las 4 vistas HTML estáticas
+ * originales con una sola componente reutilizable.
+ */
 @Component({
   selector: 'app-category',
   standalone: true,

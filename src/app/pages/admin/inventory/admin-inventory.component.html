@@ -40,8 +40,9 @@
                 <div class="qty-adjust">
                   <button type="button" class="qty-btn" (click)="dec(p)">−</button>
                   <input type="number" class="qty-input" min="0"
-                         [value]="p.stock"
-                         (input)="setStock(p, $any($event.target).value)" />
+                         [ngModel]="p.stock"
+                         (ngModelChange)="setStock(p, $event)"
+                         [name]="'stock_' + p.id" />
                   <button type="button" class="qty-btn" (click)="inc(p)">+</button>
                 </div>
               </td>

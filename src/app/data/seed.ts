@@ -1,6 +1,13 @@
 import { Product } from '../models/product.model';
 import { User } from '../models/user.model';
 
+/**
+ * Datos iniciales que se inyectan en `localStorage` cuando la aplicación
+ * arranca por primera vez (o tras un `localStorage.clear()`).
+ *
+ * Mantener estos valores como variables estáticas en `.ts` cumple con el
+ * criterio de la pauta sobre datos estáticos en componentes/servicios.
+ */
 export const SEED_USERS: User[] = [
   {
     id: 'admin',

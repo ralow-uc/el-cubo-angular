@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { OrderService } from '../../services/order.service';
 import { formatCLP, formatDate } from '../../services/storage.util';
 
+/** Historial de pedidos del usuario logueado. Solo lectura. */
 @Component({
   selector: 'app-orders',
   standalone: true,
