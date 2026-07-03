@@ -1793,3 +1793,160 @@ select.form-control {
   justify-content: center;
   flex-wrap: wrap;
 }
+
+/* ============================================================
+   Eventos (semana 7) — agenda consumida desde eventos.json
+   ============================================================ */
+
+/* Filtros por tipo */
+.evento-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+}
+
+.chip {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--gray-700);
+  border-radius: var(--radius-full);
+  padding: 6px 16px;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
+}
+
+.chip:hover {
+  border-color: var(--gray-300);
+  color: var(--gray-900);
+}
+
+.chip.is-active {
+  background: var(--brand-500);
+  border-color: var(--brand-500);
+  color: #fff;
+}
+
+/* Tarjeta de evento */
+.evento-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: transform var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out);
+  animation: card-enter var(--dur-slow) var(--ease-out) both;
+}
+
+.evento-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--gray-300);
+}
+
+.evento-media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--gray-100);
+}
+
+.evento-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+
+.evento-card:hover .evento-media img {
+  transform: scale(1.06);
+}
+
+.evento-tipo {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  background: rgba(17, 20, 26, 0.82);
+  color: var(--gray-50);
+  font-size: var(--text-xs);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  backdrop-filter: blur(2px);
+}
+
+.evento-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  flex: 1;
+}
+
+.evento-body h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  line-height: var(--leading-snug);
+}
+
+.evento-desc {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+.evento-meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  margin-top: auto;
+}
+
+.evento-meta dt {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gray-400);
+}
+
+.evento-meta dd {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--gray-700);
+}
+
+.evento-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+.evento-cupos {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.evento-precio {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--brand-700);
+}
+
+/* Tabla resumida */
+.evento-tabla-wrap {
+  margin-top: var(--space-8);
+}
+
+.evento-tabla-titulo {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  margin-bottom: var(--space-4);
+}

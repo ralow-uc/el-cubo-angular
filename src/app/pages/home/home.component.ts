@@ -1,7 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ProductService } from '../../services/product.service';
+import { EventoService } from '../../services/evento.service';
+import { Evento } from '../../models/evento.model';
+import { imageUrl } from '../../services/storage.util';
 
 interface CategoryCard {
   slug: string;
@@ -13,8 +16,9 @@ interface CategoryCard {
 }
 
 /**
- * Página de inicio. Muestra el hero, las 4 categorías navegables y el
- * conteo dinámico de juegos en el catálogo.
+ * Página de inicio. Muestra el hero, las 4 categorías navegables, el conteo
+ * dinámico de juegos y una vitrina de eventos destacados consumida desde el
+ * archivo JSON a través de {@link EventoService}.
  */
 @Component({
   selector: 'app-home',
@@ -22,8 +26,29 @@ interface CategoryCard {
   imports: [CommonModule, RouterLink],
   templateUrl: './home.component.html',
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   private products = inject(ProductService);
+  private eventos = inject(EventoService);
+
+  /** Eventos destacados para la vitrina del home (consumidos del JSON). */
+  readonly destacados = signal<Evento[]>([]);
+
+  readonly imageUrl = imageUrl;
+
+  ngOnInit(): void {
+    // Consumimos el JSON y nos quedamos con los eventos destacados.
+    this.eventos.getDestacados().subscribe({
+      next: (data) => this.destacados.set(data.slice(0, 3)),
+      error: () => this.destacados.set([]),
+    });
+  }
+
+  /** Formatea una fecha ISO `YYYY-MM-DD` como `12 de julio` (sin desfase de zona). */
+  formatFechaCorta(iso: string): string {
+    const [y, m, d] = iso.split('-').map(Number);
+    if (!y || !m || !d) return iso;
+    return new Date(y, m - 1, d).toLocaleDateString('es-CL', { day: 'numeric', month: 'long' });
+  }
 
   readonly categories: CategoryCard[] = [
     {

@@ -1,0 +1,120 @@
+<main>
+  <section class="section-lg">
+    <div class="container">
+      <header class="section-head">
+        <div>
+          <span class="eyebrow">Comunidad</span>
+          <h1>Próximos eventos en El Cubo</h1>
+        </div>
+        <p>
+          Torneos, lanzamientos y noches de juego en nuestra tienda de Providencia.
+          @if (!cargando() && !error()) { <strong>{{ total() }}</strong> actividades en agenda. }
+        </p>
+      </header>
+
+      <!-- Estado: cargando -->
+      @if (cargando()) {
+        <p class="muted" role="status">Cargando eventos…</p>
+      }
+
+      <!-- Estado: error al consumir el JSON -->
+      @else if (error()) {
+        <div class="empty-state">
+          <h2>Algo salió mal</h2>
+          <p>{{ error() }}</p>
+        </div>
+      }
+
+      <!-- Datos consumidos correctamente -->
+      @else {
+        <!-- Filtros por tipo de evento -->
+        <div class="evento-filtros" role="group" aria-label="Filtrar por tipo de evento">
+          @for (tipo of tipos; track tipo) {
+            <button
+              type="button"
+              class="chip"
+              [class.is-active]="filtro() === tipo"
+              [attr.aria-pressed]="filtro() === tipo"
+              (click)="setFiltro(tipo)"
+            >
+              {{ tipo === 'todos' ? 'Todos' : tipo }}
+            </button>
+          }
+        </div>
+
+        @if (eventos().length > 0) {
+          <!-- Vista en tarjetas -->
+          <div class="row g-4">
+            @for (ev of eventos(); track ev.id) {
+              <div class="col-md-6 col-lg-4">
+                <article class="evento-card">
+                  <div class="evento-media">
+                    <img [src]="imageUrl(ev.imagen)" [alt]="ev.nombre" width="640" height="360" loading="lazy" />
+                    <span class="evento-tipo">{{ ev.tipo }}</span>
+                  </div>
+                  <div class="evento-body">
+                    <span class="pill pill--brand">{{ ev.categoria }}</span>
+                    <h3>{{ ev.nombre }}</h3>
+                    <p class="evento-desc">{{ ev.descripcion }}</p>
+                    <dl class="evento-meta">
+                      <div>
+                        <dt>Fecha</dt>
+                        <dd>{{ formatFecha(ev.fecha) }} · {{ ev.hora }} hrs</dd>
+                      </div>
+                      <div>
+                        <dt>Lugar</dt>
+                        <dd>{{ ev.lugar }}</dd>
+                      </div>
+                    </dl>
+                    <footer class="evento-foot">
+                      <span class="evento-cupos">{{ ev.cupos }} cupos</span>
+                      <span class="evento-precio">{{ precioLabel(ev.precio) }}</span>
+                    </footer>
+                  </div>
+                </article>
+              </div>
+            }
+          </div>
+
+          <!-- Vista en tabla (agenda resumida, Bootstrap responsive) -->
+          <div class="evento-tabla-wrap">
+            <h2 class="evento-tabla-titulo">Agenda resumida</h2>
+            <div class="table-responsive">
+              <table class="table table-striped align-middle">
+                <thead>
+                  <tr>
+                    <th scope="col">Evento</th>
+                    <th scope="col">Tipo</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Lugar</th>
+                    <th scope="col" class="text-end">Cupos</th>
+                    <th scope="col" class="text-end">Precio</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (ev of eventos(); track ev.id) {
+                    <tr>
+                      <td>{{ ev.nombre }}</td>
+                      <td>{{ ev.tipo }}</td>
+                      <td>{{ formatFecha(ev.fecha) }} · {{ ev.hora }}</td>
+                      <td>{{ ev.lugar }}</td>
+                      <td class="text-end">{{ ev.cupos }}</td>
+                      <td class="text-end">{{ precioLabel(ev.precio) }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        } @else {
+          <!-- Estado: sin resultados para el filtro -->
+          <div class="empty-state">
+            <h2>Sin eventos de este tipo</h2>
+            <p>No hay actividades que coincidan con el filtro seleccionado.</p>
+            <button type="button" class="btn btn-primary" (click)="setFiltro('todos')">Ver todos</button>
+          </div>
+        }
+      }
+    </div>
+  </section>
+</main>

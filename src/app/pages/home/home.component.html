@@ -68,4 +68,47 @@
       </div>
     </div>
   </section>
+
+  @if (destacados().length > 0) {
+    <section class="section-lg" id="eventos">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Comunidad</span>
+            <h2>Próximos eventos en la tienda</h2>
+          </div>
+          <p>
+            Torneos, lanzamientos y noches de juego. Ven a probar mesas nuevas
+            y a conocer a otros jugadores.
+          </p>
+        </div>
+
+        <div class="row g-4">
+          @for (ev of destacados(); track ev.id) {
+            <div class="col-md-6 col-lg-4">
+              <article class="evento-card">
+                <div class="evento-media">
+                  <img [src]="imageUrl(ev.imagen)" [alt]="ev.nombre" width="640" height="360" loading="lazy" />
+                  <span class="evento-tipo">{{ ev.tipo }}</span>
+                </div>
+                <div class="evento-body">
+                  <h3>{{ ev.nombre }}</h3>
+                  <dl class="evento-meta">
+                    <div>
+                      <dt>Cuándo</dt>
+                      <dd>{{ formatFechaCorta(ev.fecha) }} · {{ ev.hora }} hrs</dd>
+                    </div>
+                  </dl>
+                </div>
+              </article>
+            </div>
+          }
+        </div>
+
+        <div class="hero-cta" style="margin-top: var(--space-6)">
+          <a class="btn btn-primary" [routerLink]="['/eventos']">Ver toda la agenda →</a>
+        </div>
+      </div>
+    </section>
+  }
 </main>
