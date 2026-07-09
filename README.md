@@ -17,15 +17,15 @@ La agenda de **Eventos** se consume ahora desde un backend por HTTP y se manipul
 | Editar    | `PUT`    | `{db}/eventos/{id}.json` |
 | Eliminar  | `DELETE` | `{db}/eventos/{id}.json` |
 
-- La URL base se configura en `src/environments/environment.ts` (`firebaseDbUrl`).
-- **Sin Firebase configurado** (`firebaseDbUrl: ''`), el servicio entra en **modo demo**: siembra desde `src/assets/data/eventos.json` y persiste el CRUD en `localStorage`, para que la app siga siendo navegable y demostrable.
+- La URL base **no vive en el repo**: se carga en runtime desde `assets/config.json` (vía `ConfigService` + `provideAppInitializer`). En el contenedor la genera el entrypoint a partir de la variable de entorno `FIREBASE_DB_URL`; en local se toma de `src/assets/config.json` (ver `config.example.json`, ignorado por git).
+- **Sin URL configurada**, el servicio entra en **modo demo**: siembra desde `src/assets/data/eventos.json` y persiste el CRUD en `localStorage`, para que la app siga siendo navegable y demostrable.
 - `provideHttpClient(withInterceptors([errorInterceptor]))` habilita HttpClient con un **interceptor** funcional para el manejo centralizado de errores (buenas prácticas de la guía).
 - **Pantallas donde se consume el JSON:** `/eventos` (público, lista + tabla), vitrina de destacados en el **home**, y **`/admin/eventos`** (mantenedor con crear/editar/eliminar).
 
 **Configurar Firebase y desplegar en Docker Lab:** pasos detallados en [`docs/entrega-s8.md`](docs/entrega-s8.md). Resumen:
 
 ```bash
-# 1) Pega tu URL de Realtime Database en src/environments/environment.ts
+# 1) Define tu URL de Realtime Database en la variable FIREBASE_DB_URL (ver docs/entrega-s8.md)
 # 2) Construye la imagen y córrela localmente
 docker build -t elcubo .
 docker run -p 80:80 elcubo          # abre http://localhost/
@@ -94,7 +94,7 @@ Para reiniciar los datos desde DevTools: `localStorage.clear()` y refrescar.
 
 ```
 src/
-├── environments/      ← (S8) environment.ts / .development.ts (firebaseDbUrl)
+├── environments/      ← (S8) environment.ts / .development.ts (flag production)
 └── app/
     ├── components/        ← navbar, footer, toast, game-card (reusables)
     ├── pages/             ← cada ruta del sitio

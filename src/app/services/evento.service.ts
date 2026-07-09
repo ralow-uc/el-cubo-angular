@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Evento, EventoInput } from '../models/evento.model';
-import { environment } from '../../environments/environment';
+import { ConfigService } from './config.service';
 import { STORAGE_KEYS, read, write, uuid } from './storage.util';
 
 /**
@@ -26,16 +26,18 @@ import { STORAGE_KEYS, read, write, uuid } from './storage.util';
 @Injectable({ providedIn: 'root' })
 export class EventoService {
   private http = inject(HttpClient);
+  private config = inject(ConfigService);
 
   /** Ruta del JSON de respaldo (semilla del modo demo). */
   private readonly localUrl = 'assets/data/eventos.json';
 
   /**
-   * URL base de la Realtime Database (se lee en vivo desde environment).
-   * Se le quita cualquier barra final para no generar `//` al armar las rutas.
+   * URL base de la Realtime Database (se lee en vivo desde ConfigService, que
+   * la cargó de `assets/config.json`). Se le quita cualquier barra final para
+   * no generar `//` al armar las rutas.
    */
   private get dbUrl(): string {
-    return environment.firebaseDbUrl.replace(/\/+$/, '');
+    return (this.config.firebaseDbUrl || '').replace(/\/+$/, '');
   }
 
   /** `true` cuando hay un backend Firebase configurado. */

@@ -1,14 +1,11 @@
 /**
  * Configuración de PRODUCCIÓN (build por defecto, la que usa Docker).
  *
- * `firebaseDbUrl`: URL base de tu Firebase Realtime Database, SIN barra final.
- * Ejemplo: 'https://el-cubo-1234-default-rtdb.firebaseio.com'
- *
- * Déjala vacía ('') para trabajar sin backend: la app usará el JSON local de
- * respaldo y un almacén en localStorage para el CRUD (modo demo offline).
- * Pégala aquí ANTES de construir la imagen Docker para el despliegue en Cloud.
+ * NOTA: la URL de Firebase ya NO vive aquí (para no exponerla en el repo).
+ * Se carga en tiempo de ejecución desde `assets/config.json` vía
+ * `ConfigService`; en el contenedor la genera el entrypoint a partir de la
+ * variable de entorno `FIREBASE_DB_URL`.
  */
 export const environment = {
   production: true,
-  firebaseDbUrl: 'https://el-cubo-55db5-default-rtdb.firebaseio.com/',
 };

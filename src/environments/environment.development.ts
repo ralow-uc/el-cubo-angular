@@ -1,11 +1,9 @@
 /**
- * Configuración de DESARROLLO (`ng serve` / `--configuration development`).
+ * Configuración de DESARROLLO (`ng serve`).
  *
- * Angular reemplaza `environment.ts` por este archivo vía `fileReplacements`
- * en angular.json. Puedes usar aquí una base de datos de pruebas distinta a la
- * de producción, o dejarla vacía para el modo demo offline.
+ * La URL de Firebase se toma de `assets/config.json` (ver `config.example.json`),
+ * no de este archivo. Déjalo así.
  */
 export const environment = {
   production: false,
-  firebaseDbUrl: 'https://el-cubo-55db5-default-rtdb.firebaseio.com/',
 };

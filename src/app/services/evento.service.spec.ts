@@ -2,8 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { EventoService } from './evento.service';
+import { ConfigService } from './config.service';
 import { Evento, EventoInput } from '../models/evento.model';
-import { environment } from '../../environments/environment';
 
 /** URL de una Realtime Database de pruebas (fuerza el modo Firebase). */
 const DB = 'https://elcubo-test-default-rtdb.firebaseio.com';
@@ -59,18 +59,17 @@ describe('EventoService (API REST Firebase)', () => {
   let httpMock: HttpTestingController;
 
   beforeEach(() => {
-    environment.firebaseDbUrl = DB; // activa el modo Firebase (HTTP)
     TestBed.configureTestingModule({
       // El orden importa: el backend de pruebas debe sobrescribir al real.
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
+    TestBed.inject(ConfigService).firebaseDbUrl = DB; // activa el modo Firebase
     service = TestBed.inject(EventoService);
     httpMock = TestBed.inject(HttpTestingController);
   });
 
   afterEach(() => {
     httpMock.verify();
-    environment.firebaseDbUrl = ''; // restaura el valor por defecto
   });
 
   it('se crea correctamente y detecta el backend', () => {
@@ -154,11 +153,11 @@ describe('EventoService (modo demo · localStorage)', () => {
   const LOCAL_URL = 'assets/data/eventos.json';
 
   beforeEach(() => {
-    environment.firebaseDbUrl = ''; // fuerza el modo demo
     localStorage.removeItem('elcubo:eventos');
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
+    TestBed.inject(ConfigService).firebaseDbUrl = ''; // fuerza el modo demo
     service = TestBed.inject(EventoService);
     httpMock = TestBed.inject(HttpTestingController);
   });

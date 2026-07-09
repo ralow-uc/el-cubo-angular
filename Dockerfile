@@ -24,6 +24,11 @@ FROM nginx:alpine
 ENV PORT=80
 COPY nginx.conf /etc/nginx/templates/default.conf.template
 
+# Script que genera assets/config.json al arrancar, con la URL de Firebase
+# tomada de la variable de entorno FIREBASE_DB_URL (nunca vive en el repo).
+COPY docker/40-generate-config.sh /docker-entrypoint.d/40-generate-config.sh
+RUN chmod +x /docker-entrypoint.d/40-generate-config.sh
+
 # IMPORTANTE: el builder "application" de Angular deja los archivos en
 # dist/el-cubo/browser. Esa es la ruta exacta que sirve Nginx.
 COPY --from=build /app/dist/el-cubo/browser /usr/share/nginx/html

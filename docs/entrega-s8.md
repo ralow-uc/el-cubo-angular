@@ -30,15 +30,19 @@ El código ya está listo; esta guía cubre lo que debes ejecutar con tus cuenta
   `https://el-cubo-xxxx-default-rtdb.firebaseio.com/`
 - Cópiala **sin la barra final**.
 
-### 4. Pegar la URL en la app
-- Abre **`src/environments/environment.ts`** y pega la URL en `firebaseDbUrl`:
-  ```ts
-  export const environment = {
-    production: true,
-    firebaseDbUrl: 'https://el-cubo-xxxx-default-rtdb.firebaseio.com',
-  };
+### 4. Configurar la URL (fuera del repo)
+La URL de Firebase **no se guarda en el código** (para no exponerla en GitHub). Vive en:
+- **En Render (producción):** una variable de entorno `FIREBASE_DB_URL` (ver Parte B).
+- **En local (opcional, para probar con `npm start`):** crea el archivo `src/assets/config.json`
+  (está en `.gitignore`, no se sube) copiando la plantilla:
+  ```bash
+  cp src/assets/config.example.json src/assets/config.json
   ```
-- (Opcional) Haz lo mismo en `environment.development.ts` para usar Firebase también con `npm start`.
+  y pega tu URL:
+  ```json
+  { "firebaseDbUrl": "https://el-cubo-xxxx-default-rtdb.firebaseio.com" }
+  ```
+  Sin este archivo, `npm start` funciona en **modo demo** (localStorage).
 
 ### 5. Probar el CRUD localmente
 ```bash
@@ -54,12 +58,13 @@ npm start        # http://localhost:4200/
 ## Parte B — Docker (imagen, contenedor y Cloud)
 
 > Los archivos `Dockerfile`, `nginx.conf` y `.dockerignore` ya están en la raíz de `el-cubo/`.
-> **Importante:** pega la URL de Firebase en `environment.ts` **antes** de construir la imagen (el valor se “hornea” en el build de producción).
+> La URL de Firebase **no va horneada**: el contenedor la lee de la variable de entorno `FIREBASE_DB_URL` al arrancar (y genera `assets/config.json`). Sin la variable, corre en modo demo.
 
 ### 1. Local (con Docker Desktop abierto)
 ```bash
 docker build -t elcubo .
-docker run -p 80:80 elcubo
+# Con Firebase (reemplaza por tu URL):
+docker run -p 80:80 -e FIREBASE_DB_URL="https://el-cubo-xxxx-default-rtdb.firebaseio.com" elcubo
 # abre http://localhost/
 ```
 > El nombre de la imagen debe ir sin mayúsculas, ñ, tildes ni espacios (ej. `elcubo`).
@@ -79,8 +84,12 @@ docker run -p 80:80 elcubo
    - **Region:** la más cercana (ej. Oregon).
    - **Instance Type:** **Free**.
    - Root Directory / Build Command / Start Command: **déjalos vacíos** (el Dockerfile manda).
-5. **Create Web Service**. Render construye la imagen y la despliega (el primer build tarda unos minutos).
-6. Al terminar, arriba verás la **URL pública**: `https://el-cubo.onrender.com`. Ábrela: el CRUD ya pega a tu Firebase.
+5. **Environment Variables** → **Add Environment Variable**:
+   - **Key:** `FIREBASE_DB_URL`
+   - **Value:** tu URL de Realtime Database (ej. `https://el-cubo-xxxx-default-rtdb.firebaseio.com`)
+   > Aquí es donde vive la URL — **nunca en el repo**. Puedes cambiarla sin tocar el código.
+6. **Create Web Service**. Render construye la imagen y la despliega (el primer build tarda unos minutos).
+7. Al terminar, arriba verás la **URL pública**: `https://el-cubo.onrender.com`. Ábrela: el CRUD ya pega a tu Firebase.
 
 > En el plan **Free**, el servicio "duerme" tras ~15 min de inactividad; la primera visita luego de dormir tarda ~30–50 s en despertar. Para el video, **ábrela una vez antes de grabar** para que ya esté despierta.
 
