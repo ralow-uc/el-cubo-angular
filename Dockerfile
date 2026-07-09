@@ -18,8 +18,11 @@ RUN npm run build
 # --- Etapa 2: servir los archivos estáticos con Nginx ---
 FROM nginx:alpine
 
-# Configuración de Nginx con fallback SPA (todas las rutas -> index.html).
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Puerto configurable: en local vale 80; Render/Cloud Run inyectan su propio
+# PORT. El entrypoint de la imagen nginx corre envsubst sobre los archivos
+# .template (reemplazando ${PORT}) antes de levantar el servidor.
+ENV PORT=80
+COPY nginx.conf /etc/nginx/templates/default.conf.template
 
 # IMPORTANTE: el builder "application" de Angular deja los archivos en
 # dist/el-cubo/browser. Esa es la ruta exacta que sirve Nginx.

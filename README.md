@@ -31,7 +31,9 @@ docker build -t elcubo .
 docker run -p 80:80 elcubo          # abre http://localhost/
 ```
 
-Para el Cloud: subir el repo a GitHub, entrar a [Docker Lab (Play-with-Docker)](https://labs.play-with-docker.com/), clonar el repo, `docker build` + `docker run -p 80:80`, y abrir el puerto 80 para obtener la URL pública.
+Para el Cloud: el contenedor lee el puerto de la variable `PORT` (en local usa 80). Se despliega en **[Render](https://render.com/)** conectando el repo de GitHub (Render construye la imagen del `Dockerfile` y entrega una URL pública HTTPS). Pasos detallados en [`docs/entrega-s8.md`](docs/entrega-s8.md).
+
+> Nota: Play with Docker (Docker Lab) fue descontinuado el 1 de marzo de 2026; Render corre la misma imagen Docker y cumple lo mismo (imagen + contenedor + Cloud + URL pública).
 
 ## Requisitos
 

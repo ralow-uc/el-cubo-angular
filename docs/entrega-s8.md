@@ -64,19 +64,25 @@ docker run -p 80:80 elcubo
 ```
 > El nombre de la imagen debe ir sin mayúsculas, ñ, tildes ni espacios (ej. `elcubo`).
 
-### 2. Cloud — Docker Lab (Play-with-Docker)
+### 2. Cloud — Render (reemplazo de Docker Lab)
+
+> **Nota:** Play with Docker (Docker Lab) fue **descontinuado el 1 de marzo de 2026**. Usamos **Render**, que construye la misma imagen del `Dockerfile` y la publica con URL pública HTTPS. Menciónalo en el video.
+>
+> El contenedor lee el puerto de la variable `PORT` (Render la inyecta); en local sigue usando el 80.
+
 1. Sube todo a GitHub: `git add -A && git commit -m "S8: API REST Firebase + Docker" && git push`.
-2. Entra a <https://labs.play-with-docker.com/> e inicia sesión con tu cuenta de Docker/GitHub.
-3. **ADD NEW INSTANCE**. En la consola:
-   ```bash
-   git clone <URL-DE-TU-REPO>.git
-   cd <carpeta-del-repo>/el-cubo        # donde está el Dockerfile
-   docker build -t elcubo .
-   docker run -p 80:80 elcubo
-   ```
-4. Cuando termine, haz clic en **OPEN PORT** e ingresa **80** → se abre la **URL pública**.
-   - Si el botón del puerto no aparece solo, usa **OPEN PORT** en la barra superior.
-5. La instancia dura **~4 horas**; si expira, vuelve a crear una y repite `docker build`/`docker run`.
+   - El **repo debe ser público** (o conectar Render a tu GitHub con permisos al repo privado).
+2. Entra a <https://render.com/> → **Sign up / Log in** (puedes usar tu cuenta de GitHub). Sin tarjeta de crédito.
+3. **New +** → **Web Service** → **Build and deploy from a Git repository** → conecta y elige `el-cubo-angular`.
+4. Render detecta el `Dockerfile` (Runtime = **Docker**). Configura:
+   - **Name:** `el-cubo` (será parte de la URL).
+   - **Region:** la más cercana (ej. Oregon).
+   - **Instance Type:** **Free**.
+   - Root Directory / Build Command / Start Command: **déjalos vacíos** (el Dockerfile manda).
+5. **Create Web Service**. Render construye la imagen y la despliega (el primer build tarda unos minutos).
+6. Al terminar, arriba verás la **URL pública**: `https://el-cubo.onrender.com`. Ábrela: el CRUD ya pega a tu Firebase.
+
+> En el plan **Free**, el servicio "duerme" tras ~15 min de inactividad; la primera visita luego de dormir tarda ~30–50 s en despertar. Para el video, **ábrela una vez antes de grabar** para que ya esté despierta.
 
 ---
 
@@ -92,7 +98,7 @@ docker run -p 80:80 elcubo
 
 ### Checklist del video (Kaltura) — cubre el 100% de la pauta (criterio 3)
 1. Muestra el **código**: `evento.service.ts` (GET/POST/PUT/DELETE) y el JSON en Firebase.
-2. Muestra la **subida a Docker Lab** (build + run) y abre la **URL pública**.
+2. Muestra el **despliegue en Cloud** (Render construyendo la imagen del Dockerfile) y abre la **URL pública**.
 3. Navega por las **pantallas que consumen el JSON**: `/eventos`, home (destacados) y **`/admin/eventos`**.
 4. Ejecuta el **CRUD en vivo** en la URL pública: crea, edita y elimina un evento (y muestra el cambio reflejado en Firebase).
 5. Comenta **características y diseño** (roles, validaciones, tema El Cubo).
