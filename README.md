@@ -2,7 +2,36 @@
 
 Sitio de **El Cubo**, PYME ficticia de juegos de mesa, construido con **Angular 19** y standalone components.
 
-E-commerce frontend con catálogo dinámico por categoría, ficha de producto, autenticación, carrito, checkout simulado, historial de pedidos y panel de administración. Toda la persistencia vive en `localStorage`.
+E-commerce frontend con catálogo dinámico por categoría, ficha de producto, autenticación, carrito, checkout simulado, historial de pedidos y panel de administración. La persistencia del e-commerce vive en `localStorage`; la **agenda de eventos** se consume desde una **API REST (Firebase Realtime Database)**.
+
+## Semana 8 — Consumo de API REST (Firebase) + Docker/Cloud (sumativa)
+
+La agenda de **Eventos** se consume ahora desde un backend por HTTP y se manipula con los **cuatro métodos** GET/POST/PUT/DELETE, tal como pide la actividad sumativa. Además, la app se **conteneriza con Docker** para desplegarse en Cloud (Docker Lab).
+
+**Consumo de la API REST** (`src/app/services/evento.service.ts`):
+
+| Operación | Método HTTP | Endpoint Firebase |
+|-----------|-------------|-------------------|
+| Listar    | `GET`    | `{db}/eventos.json` (objeto → arreglo) |
+| Crear     | `POST`   | `{db}/eventos.json` (Firebase asigna la clave) |
+| Editar    | `PUT`    | `{db}/eventos/{id}.json` |
+| Eliminar  | `DELETE` | `{db}/eventos/{id}.json` |
+
+- La URL base se configura en `src/environments/environment.ts` (`firebaseDbUrl`).
+- **Sin Firebase configurado** (`firebaseDbUrl: ''`), el servicio entra en **modo demo**: siembra desde `src/assets/data/eventos.json` y persiste el CRUD en `localStorage`, para que la app siga siendo navegable y demostrable.
+- `provideHttpClient(withInterceptors([errorInterceptor]))` habilita HttpClient con un **interceptor** funcional para el manejo centralizado de errores (buenas prácticas de la guía).
+- **Pantallas donde se consume el JSON:** `/eventos` (público, lista + tabla), vitrina de destacados en el **home**, y **`/admin/eventos`** (mantenedor con crear/editar/eliminar).
+
+**Configurar Firebase y desplegar en Docker Lab:** pasos detallados en [`docs/entrega-s8.md`](docs/entrega-s8.md). Resumen:
+
+```bash
+# 1) Pega tu URL de Realtime Database en src/environments/environment.ts
+# 2) Construye la imagen y córrela localmente
+docker build -t elcubo .
+docker run -p 80:80 elcubo          # abre http://localhost/
+```
+
+Para el Cloud: subir el repo a GitHub, entrar a [Docker Lab (Play-with-Docker)](https://labs.play-with-docker.com/), clonar el repo, `docker build` + `docker run -p 80:80`, y abrir el puerto 80 para obtener la URL pública.
 
 ## Requisitos
 
@@ -37,6 +66,7 @@ Corre Jasmine + Karma. Suites incluidas:
 - `validators/password.validator.spec.ts` — reglas de password, edad, match de controles.
 - `services/auth.service.spec.ts` — login, logout, seed, validaciones de unicidad.
 - `services/product.service.spec.ts` — CRUD de productos, búsqueda por id/categoría.
+- `services/evento.service.spec.ts` — (S8) API REST Firebase: GET/POST/PUT/DELETE con `HttpTestingController` + modo demo localStorage.
 - `pages/login/login.component.spec.ts` — Reactive Form valid/inválido, submit.
 - `pages/register/register.component.spec.ts` — email inválido, password mínima válida, edad <13, limpieza, dirección opcional.
 
@@ -61,20 +91,27 @@ Para reiniciar los datos desde DevTools: `localStorage.clear()` y refrescar.
 ## Estructura
 
 ```
-src/app/
-├── components/        ← navbar, footer, toast, game-card (reusables)
-├── pages/             ← cada ruta del sitio
-│   ├── home/
-│   ├── category/      ← una sola página dinámica por :slug
-│   ├── product-detail/← una sola página dinámica por :id
-│   ├── login/ register/ recover-password/ profile/
-│   ├── cart/ checkout/ orders/
-│   └── admin/         ← dashboard, products, users, inventory
-├── services/          ← AuthService, ProductService, CartService, OrderService, ToastService
-├── guards/            ← authGuard, adminGuard funcionales
-├── validators/        ← passwordValidator, ageValidator, matchControlValidator, cardExpiryValidator
-├── models/            ← interfaces TypeScript (User, Product, Cart, Order)
-└── data/              ← seed.ts con datos iniciales (12 productos, 2 usuarios)
+src/
+├── environments/      ← (S8) environment.ts / .development.ts (firebaseDbUrl)
+└── app/
+    ├── components/        ← navbar, footer, toast, game-card (reusables)
+    ├── pages/             ← cada ruta del sitio
+    │   ├── home/
+    │   ├── eventos/       ← (S7/S8) agenda pública consumida de la API REST
+    │   ├── category/      ← una sola página dinámica por :slug
+    │   ├── product-detail/← una sola página dinámica por :id
+    │   ├── login/ register/ recover-password/ profile/
+    │   ├── cart/ checkout/ orders/
+    │   └── admin/         ← dashboard, eventos (CRUD), products, users, inventory
+    ├── services/          ← Auth, Product, Cart, Order, Toast, EventoService (S8: CRUD API REST)
+    ├── interceptors/      ← (S8) errorInterceptor (manejo central de errores HTTP)
+    ├── guards/            ← authGuard, adminGuard funcionales
+    ├── validators/        ← passwordValidator, ageValidator, matchControlValidator, cardExpiryValidator
+    ├── models/            ← interfaces TypeScript (User, Product, Cart, Order, Evento)
+    └── data/              ← seed.ts (12 productos, 2 usuarios) · assets/data/eventos.json (semilla)
+
+Dockerfile · nginx.conf · .dockerignore   ← (S8) contenerización para Cloud
+docs/entrega-s8.md · docs/firebase-eventos-seed.json   ← (S8) guía + semilla Firebase
 ```
 
 ## Stack

@@ -9,6 +9,7 @@ export const STORAGE_KEYS = {
   products: 'elcubo:products',
   cart: 'elcubo:cart',
   orders: 'elcubo:orders',
+  eventos: 'elcubo:eventos',
 } as const;
 
 /** Lee y parsea JSON desde `localStorage`. Devuelve `fallback` si no existe. */

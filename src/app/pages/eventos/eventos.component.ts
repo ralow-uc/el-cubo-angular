@@ -8,14 +8,15 @@ import { formatCLP, imageUrl } from '../../services/storage.util';
 type FiltroTipo = TipoEvento | 'todos';
 
 /**
- * Página de agenda de eventos de El Cubo (torneos, lanzamientos, talleres…).
+ * Página pública de agenda de eventos de El Cubo (torneos, lanzamientos…).
  *
- * Consume el archivo `assets/data/eventos.json` a través de {@link EventoService}
- * y muestra los datos en dos formatos: una grilla de tarjetas y una tabla
- * resumida (Bootstrap `table`). Maneja los estados de carga, error y "sin datos".
+ * Consume la API REST a través de {@link EventoService} (Firebase Realtime
+ * Database, con respaldo en el JSON local) y muestra los datos en dos formatos:
+ * una grilla de tarjetas y una tabla resumida (Bootstrap `table`). Maneja los
+ * estados de carga, error y "sin datos".
  *
- * Implementa el patrón de la guía de la semana 7: en `ngOnInit` se suscribe al
- * `Observable` que devuelve el servicio y asigna el resultado a una signal.
+ * En `ngOnInit` se suscribe al `Observable` que devuelve el servicio (GET) y
+ * asigna el resultado a una signal.
  */
 @Component({
   selector: 'app-eventos',

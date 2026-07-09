@@ -1,6 +1,6 @@
 /**
  * Tipo de actividad que organiza la tienda. Sirve para agrupar y filtrar
- * la agenda de eventos consumida desde `assets/data/eventos.json`.
+ * la agenda de eventos consumida desde Firebase / el JSON de respaldo.
  */
 export type TipoEvento =
   | 'Torneo'
@@ -9,18 +9,22 @@ export type TipoEvento =
   | 'Noche de juegos'
   | 'Aprende a jugar';
 
+/** Categoría del catálogo asociada al evento (o `'general'`). */
+export type CategoriaEvento =
+  | 'estrategia'
+  | 'familiares'
+  | 'cartas'
+  | 'cooperativos'
+  | 'general';
+
 /**
- * Evento de la agenda de El Cubo (torneos, lanzamientos, talleres…).
- *
- * Estructura que refleja exactamente el formato del archivo JSON
- * `src/assets/data/eventos.json`, consumido por {@link EventoService}.
+ * Datos de un evento SIN su identificador. Es el cuerpo (payload) que se
+ * envía a Firebase en un POST/PUT; Firebase asigna la clave (push-id).
  */
-export interface Evento {
-  id: number;
+export interface EventoInput {
   nombre: string;
   tipo: TipoEvento;
-  /** Slug de categoría del catálogo, o `'general'` si no aplica. */
-  categoria: 'estrategia' | 'familiares' | 'cartas' | 'cooperativos' | 'general';
+  categoria: CategoriaEvento;
   /** Fecha en formato ISO `YYYY-MM-DD`. */
   fecha: string;
   /** Hora en formato `HH:mm`. */
@@ -35,4 +39,14 @@ export interface Evento {
   /** Nombre de archivo dentro de `assets/img/`. */
   imagen: string;
   descripcion: string;
+}
+
+/**
+ * Evento de la agenda de El Cubo (torneos, lanzamientos, talleres…).
+ *
+ * `id` es la clave del registro en Firebase Realtime Database (un push-id
+ * de tipo string, p. ej. `"-NpQ1a..."`). En modo demo local es un slug.
+ */
+export interface Evento extends EventoInput {
+  id: string;
 }

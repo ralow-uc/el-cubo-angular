@@ -14,6 +14,7 @@ import { AdminDashboardComponent } from './pages/admin/dashboard/admin-dashboard
 import { AdminProductsComponent } from './pages/admin/products/admin-products.component';
 import { AdminUsersComponent } from './pages/admin/users/admin-users.component';
 import { AdminInventoryComponent } from './pages/admin/inventory/admin-inventory.component';
+import { AdminEventosComponent } from './pages/admin/eventos/admin-eventos.component';
 import { adminGuard, authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -33,6 +34,7 @@ export const routes: Routes = [
     canActivate: [adminGuard],
     children: [
       { path: '', component: AdminDashboardComponent, title: 'Admin · El Cubo' },
+      { path: 'eventos', component: AdminEventosComponent, title: 'Admin · Eventos' },
       { path: 'productos', component: AdminProductsComponent, title: 'Admin · Productos' },
       { path: 'usuarios', component: AdminUsersComponent, title: 'Admin · Usuarios' },
       { path: 'inventario', component: AdminInventoryComponent, title: 'Admin · Inventario' },

@@ -1,0 +1,108 @@
+{
+  "eventos": {
+    "catan-torneo": {
+      "nombre": "Torneo abierto de Catan",
+      "tipo": "Torneo",
+      "categoria": "estrategia",
+      "fecha": "2026-07-12",
+      "hora": "16:00",
+      "lugar": "Tienda El Cubo · Providencia",
+      "cupos": 16,
+      "precio": 8000,
+      "destacado": true,
+      "imagen": "catan.jpg",
+      "descripcion": "Clasificatorias a cuatro mesas y final a una sola. Traen tu estrategia de asentamientos y a ver quién controla el puerto."
+    },
+    "spirit-island-lanzamiento": {
+      "nombre": "Noche de lanzamiento: Spirit Island",
+      "tipo": "Lanzamiento",
+      "categoria": "cooperativos",
+      "fecha": "2026-07-18",
+      "hora": "19:00",
+      "lugar": "Tienda El Cubo · Providencia",
+      "cupos": 12,
+      "precio": 0,
+      "destacado": true,
+      "imagen": "spirit-island.jpg",
+      "descripcion": "Presentamos la nueva reimpresión con mesas guiadas por un monitor. Espíritus ancestrales contra la colonización, cooperativo puro."
+    },
+    "azul-taller": {
+      "nombre": "Aprende a jugar: Azul",
+      "tipo": "Aprende a jugar",
+      "categoria": "familiares",
+      "fecha": "2026-07-26",
+      "hora": "11:30",
+      "lugar": "Tienda El Cubo · Providencia",
+      "cupos": 20,
+      "precio": 0,
+      "destacado": false,
+      "imagen": "azul.jpg",
+      "descripcion": "Taller para principiantes. En 30 minutos estás colocando azulejos como en un palacio portugués. Ideal para venir en familia."
+    },
+    "magic-liga": {
+      "nombre": "Liga Magic: Final Fantasy Starter",
+      "tipo": "Torneo",
+      "categoria": "cartas",
+      "fecha": "2026-08-02",
+      "hora": "15:00",
+      "lugar": "Tienda El Cubo · Providencia",
+      "cupos": 24,
+      "precio": 12000,
+      "destacado": true,
+      "imagen": "magic-ff-starter.jpg",
+      "descripcion": "Formato starter con los mazos de Cloud y Sephiroth. Cuatro rondas suizas, premios en productos de la tienda."
+    },
+    "pandemic-noche": {
+      "nombre": "Noche de juegos cooperativos: Pandemic",
+      "tipo": "Noche de juegos",
+      "categoria": "cooperativos",
+      "fecha": "2026-08-09",
+      "hora": "18:30",
+      "lugar": "Tienda El Cubo · Providencia",
+      "cupos": 16,
+      "precio": 5000,
+      "destacado": false,
+      "imagen": "pandemic.jpg",
+      "descripcion": "Mesas simultáneas de Pandemic contra el reloj. Todos contra el juego: cuatro enfermedades a punto de salirse de control."
+    },
+    "ticket-familiar": {
+      "nombre": "Aventureros al Tren: mesa familiar",
+      "tipo": "Noche de juegos",
+      "categoria": "familiares",
+      "fecha": "2026-08-16",
+      "hora": "12:00",
+      "lugar": "Tienda El Cubo · Providencia",
+      "cupos": 18,
+      "precio": 4000,
+      "destacado": false,
+      "imagen": "ticket-to-ride.jpg",
+      "descripcion": "Rutas de tren por Europa en partidas rápidas de 45 minutos. Reglas simples, picardía competitiva, apto para todas las edades."
+    },
+    "gloomhaven-campana": {
+      "nombre": "Campaña abierta de Gloomhaven",
+      "tipo": "Taller",
+      "categoria": "cooperativos",
+      "fecha": "2026-08-23",
+      "hora": "17:00",
+      "lugar": "Tienda El Cubo · Providencia",
+      "cupos": 8,
+      "precio": 10000,
+      "destacado": false,
+      "imagen": "gloomhaven.jpg",
+      "descripcion": "Primeros escenarios de la campaña con personajes prearmados. Aventura táctica para grupos que quieren un proyecto largo."
+    },
+    "7wonders-torneo": {
+      "nombre": "Torneo relámpago de 7 Wonders Duel",
+      "tipo": "Torneo",
+      "categoria": "cartas",
+      "fecha": "2026-09-06",
+      "hora": "16:30",
+      "lugar": "Tienda El Cubo · Providencia",
+      "cupos": 16,
+      "precio": 6000,
+      "destacado": false,
+      "imagen": "7-wonders-duel.jpg",
+      "descripcion": "Duelos a dos jugadores por eliminación directa. Tres caminos para ganar y partidas que no se atascan. Rápido e intenso."
+    }
+  }
+}

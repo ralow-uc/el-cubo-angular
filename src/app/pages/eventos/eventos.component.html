@@ -17,7 +17,7 @@
         <p class="muted" role="status">Cargando eventos…</p>
       }
 
-      <!-- Estado: error al consumir el JSON -->
+      <!-- Estado: error al cargar la agenda -->
       @else if (error()) {
         <div class="empty-state">
           <h2>Algo salió mal</h2>
@@ -25,7 +25,7 @@
         </div>
       }
 
-      <!-- Datos consumidos correctamente -->
+      <!-- Agenda cargada correctamente -->
       @else {
         <!-- Filtros por tipo de evento -->
         <div class="evento-filtros" role="group" aria-label="Filtrar por tipo de evento">

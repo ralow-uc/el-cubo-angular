@@ -42,6 +42,19 @@
     <section class="admin-quick-actions">
       <div class="row g-3">
         <div class="col-md-4">
+          <a [routerLink]="['/admin/eventos']" class="admin-action-card">
+            <div class="admin-action-body">
+              <h3>Eventos</h3>
+              <p>Administra la agenda de torneos, lanzamientos y talleres.</p>
+            </div>
+            <span class="admin-action-arrow" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </a>
+        </div>
+        <div class="col-md-4">
           <a [routerLink]="['/admin/productos']" class="admin-action-card">
             <div class="admin-action-body">
               <h3>Productos</h3>

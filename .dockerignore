@@ -1,0 +1,20 @@
+# Dependencias y artefactos (se regeneran dentro de la imagen)
+node_modules
+dist
+.angular
+coverage
+documentation
+
+# Control de versiones y metadatos
+.git
+.gitignore
+.editorconfig
+
+# Editor / SO
+.vscode
+.DS_Store
+
+# Docs y comprimidos que no forman parte del build
+*.md
+*.zip
+*.rar

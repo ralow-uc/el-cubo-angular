@@ -1,0 +1,189 @@
+<main>
+  <div class="container">
+    <header class="admin-page-head">
+      <div>
+        <span class="eyebrow">Mantenedor</span>
+        <h1>Eventos</h1>
+        <p>Gestiona la agenda de torneos, lanzamientos y talleres de la tienda.</p>
+      </div>
+      <button type="button" class="btn btn-primary" (click)="openNew()">+ Nuevo evento</button>
+    </header>
+
+    <section class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Evento</th>
+            <th>Tipo</th>
+            <th>Fecha</th>
+            <th class="num">Cupos</th>
+            <th class="num">Precio</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (cargando()) {
+            <tr><td colspan="6" class="empty">Cargando eventos…</td></tr>
+          } @else if (eventos().length === 0) {
+            <tr><td colspan="6" class="empty">Sin eventos. Crea el primero.</td></tr>
+          } @else {
+            @for (e of eventos(); track e.id) {
+              <tr>
+                <td>
+                  <div class="admin-prod-cell">
+                    <img [src]="imageUrl(e.imagen)" alt="" loading="lazy" />
+                    <div>
+                      <strong>{{ e.nombre }}</strong>
+                      <small>{{ e.categoria }}</small>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="pill">{{ e.tipo }}</span></td>
+                <td>{{ formatFecha(e.fecha) }} · {{ e.hora }}</td>
+                <td class="num">{{ e.cupos }}</td>
+                <td class="num">{{ e.precio > 0 ? formatCLP(e.precio) : 'Gratis' }}</td>
+                <td class="actions">
+                  <button type="button" class="btn-link" (click)="openEdit(e)">Editar</button>
+                  <button type="button" class="btn-link btn-link--danger" (click)="remove(e)">Eliminar</button>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </section>
+
+    @if (open()) {
+      <div class="admin-dialog-backdrop" (click)="close()">
+        <div class="admin-dialog" (click)="$event.stopPropagation()" role="dialog">
+          <header class="admin-dialog-head">
+            <h2>{{ editingId ? 'Editar evento' : 'Nuevo evento' }}</h2>
+            <button type="button" class="admin-dialog-close" (click)="close()" aria-label="Cerrar">×</button>
+          </header>
+          <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+            @if (alertMsg) {
+              <div class="form-alert form-alert--error">{{ alertMsg }}</div>
+            }
+
+            <div class="field">
+              <label class="form-label" for="e-nombre">Nombre</label>
+              <input type="text" class="form-control" id="e-nombre" formControlName="nombre"
+                     [class.is-invalid]="!!errorOf('nombre')" />
+              @if (errorOf('nombre'); as err) {
+                <div class="invalid-feedback">{{ err }}</div>
+              }
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="field">
+                  <label class="form-label" for="e-tipo">Tipo</label>
+                  <select class="form-control" id="e-tipo" formControlName="tipo">
+                    @for (t of tipos; track t) {
+                      <option [value]="t">{{ t }}</option>
+                    }
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="field">
+                  <label class="form-label" for="e-categoria">Categoría</label>
+                  <select class="form-control" id="e-categoria" formControlName="categoria">
+                    @for (c of categorias; track c) {
+                      <option [value]="c">{{ c }}</option>
+                    }
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4">
+                <div class="field">
+                  <label class="form-label" for="e-fecha">Fecha</label>
+                  <input type="date" class="form-control" id="e-fecha" formControlName="fecha"
+                         [class.is-invalid]="!!errorOf('fecha')" />
+                  @if (errorOf('fecha'); as err) {
+                    <div class="invalid-feedback">{{ err }}</div>
+                  }
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="field">
+                  <label class="form-label" for="e-hora">Hora</label>
+                  <input type="time" class="form-control" id="e-hora" formControlName="hora"
+                         [class.is-invalid]="!!errorOf('hora')" />
+                  @if (errorOf('hora'); as err) {
+                    <div class="invalid-feedback">{{ err }}</div>
+                  }
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="field">
+                  <label class="form-label" for="e-cupos">Cupos</label>
+                  <input type="number" class="form-control" id="e-cupos" formControlName="cupos" min="1"
+                         [class.is-invalid]="!!errorOf('cupos')" />
+                  @if (errorOf('cupos'); as err) {
+                    <div class="invalid-feedback">{{ err }}</div>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="form-label" for="e-lugar">Lugar</label>
+              <input type="text" class="form-control" id="e-lugar" formControlName="lugar"
+                     [class.is-invalid]="!!errorOf('lugar')" />
+              @if (errorOf('lugar'); as err) {
+                <div class="invalid-feedback">{{ err }}</div>
+              }
+            </div>
+
+            <div class="field">
+              <label class="form-label" for="e-desc">Descripción</label>
+              <textarea class="form-control" id="e-desc" formControlName="descripcion" rows="3"
+                        [class.is-invalid]="!!errorOf('descripcion')"></textarea>
+              @if (errorOf('descripcion'); as err) {
+                <div class="invalid-feedback">{{ err }}</div>
+              }
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="field">
+                  <label class="form-label" for="e-precio">Precio (0 = gratis)</label>
+                  <input type="number" class="form-control" id="e-precio" formControlName="precio" min="0"
+                         [class.is-invalid]="!!errorOf('precio')" />
+                  @if (errorOf('precio'); as err) {
+                    <div class="invalid-feedback">{{ err }}</div>
+                  }
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="field">
+                  <label class="form-label" for="e-imagen">Imagen (filename en assets/img/)</label>
+                  <input type="text" class="form-control" id="e-imagen" formControlName="imagen"
+                         placeholder="catan.jpg" />
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="form-check">
+                <input type="checkbox" class="form-check-input" formControlName="destacado" />
+                <span class="form-check-label">Destacar en el home</span>
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-ghost" (click)="close()">Cancelar</button>
+              <button type="submit" class="btn btn-primary" [disabled]="guardando()">
+                {{ guardando() ? 'Guardando…' : (editingId ? 'Guardar' : 'Crear') }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    }
+  </div>
+</main>
